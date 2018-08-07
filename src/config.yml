@@ -1,0 +1,18 @@
+visible-commands:
+    - tpahere
+    - tpaccept
+    - tpacancel
+    - sethome
+    - home
+    - warp
+    - spawn
+    - rules
+    - help
+    - tips
+    - vote
+    - tell
+    - msg
+    - me
+    - afk
+    - suicide
+    

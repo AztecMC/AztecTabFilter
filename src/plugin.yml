@@ -1,0 +1,23 @@
+name: AztecTabCompleter
+main: com.github.crashdemons.aztectabcompleter.AZTabPlugin
+version: 0.17 (alpha)
+author: crashdemons
+description: Filters command tab-complete suggestions by whitelist.
+website: https://github.com/crashdemons
+depend: [ProtocolLib]
+
+commands:
+   aztabreload:
+      description: reloads aztab config
+      usage: |
+        /aztabreload
+      permission: aztectabcompleter.reload
+      permission-message: You don't have permission for this command
+      
+permissions:
+  aztectabcompleter.*:
+    description: gives all permissions of the AZTab
+    default: op
+    children:
+      aztectabcompleter.reload:
+        description: Gives permission to reload AZTab config
