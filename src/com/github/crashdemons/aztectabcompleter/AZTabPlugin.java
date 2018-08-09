@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -115,6 +116,11 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.COMMANDS);
             packet.getSpecificModifier(RootCommandNode.class).write(0, rcn);//write the modified root object into a new packet
             try{
+                Player p = event.getPlayer();
+                if(p==null){
+                    pl.log("Could not resend to player (null) - they logged out too soon?");
+                    return;
+                }
                 ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);//send packet - disable further filtering.
             }catch(InvocationTargetException e){
                 e.printStackTrace();
