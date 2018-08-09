@@ -121,7 +121,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                     pl.log("Could not resend to player (null) - they logged out too soon?");
                     return;
                 }
-                ProtocolLibrary.getProtocolManager().sendServerPacket(event.getPlayer(), packet, false);//send packet - disable further filtering.
+                ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet, false);//send packet - disable further filtering.
             }catch(InvocationTargetException e){
                 e.printStackTrace();
             }
