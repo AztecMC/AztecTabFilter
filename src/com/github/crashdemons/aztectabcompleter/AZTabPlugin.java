@@ -130,7 +130,6 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                 }catch(IllegalArgumentException e){
                     String name = playerDestination.getName();
                     if(name==null) name = "[null]";
-                    playerDestination.
                     pl.log("Problem sending packet to " + name +" "+playerDestination.getUniqueId());
                 }
             }catch(InvocationTargetException e){
