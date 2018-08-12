@@ -116,12 +116,23 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.COMMANDS);
             packet.getSpecificModifier(RootCommandNode.class).write(0, rcn);//write the modified root object into a new packet
             try{
-                Player p = event.getPlayer();
-                if(p==null){
+                Player playerDestination = event.getPlayer();
+                if(playerDestination==null){
                     pl.log("Could not resend to player (null) - they logged out too soon?");
                     return;
                 }
-                ProtocolLibrary.getProtocolManager().sendServerPacket(p, packet, false);//send packet - disable further filtering.
+                if(!playerDestination.isOnline()){
+                    pl.log("Could not resend to offline player - they logged out too soon?");
+                    return;
+                }
+                try{
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(playerDestination, packet, false);//send packet - disable further filtering.
+                }catch(IllegalArgumentException e){
+                    String name = playerDestination.getName();
+                    if(name==null) name = "[null]";
+                    playerDestination.
+                    pl.log("Problem sending packet to " + name +" "+playerDestination.getUniqueId());
+                }
             }catch(InvocationTargetException e){
                 e.printStackTrace();
             }
