@@ -1,3 +1,4 @@
+#Defines commands visible to all users
 visible-commands:
     - tpahere
     - tpaccept

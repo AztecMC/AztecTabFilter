@@ -91,15 +91,13 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         @Override
         public void onPacketSending (PacketEvent event) {
             AZTabPlugin pl = (AZTabPlugin) this.plugin;
-            
-            
+           
+            if(!pl.enabled) return;
             Player playerDestination = event.getPlayer();
             if(playerDestination==null) return;
             if(playerDestination.hasPermission("aztectabcompleter.bypass")) return;
             
             
-            
-            if(!pl.enabled) return;
             pl.log("Intercepted Commands packet, filtering...");
             
             //the new Commands packet syntax contains a RootNode object containing multiple CommandNode objects inside in the form of a list
