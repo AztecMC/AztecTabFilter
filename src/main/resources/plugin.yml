@@ -1,6 +1,6 @@
 name: AztecTabCompleter
 main: com.github.crashdemons.aztectabcompleter.AZTabPlugin
-version: 0.17.4 (alpha)
+version: 0.17.5
 author: crashdemons
 description: Filters command tab-complete suggestions by whitelist.
 website: https://github.com/crashdemons
