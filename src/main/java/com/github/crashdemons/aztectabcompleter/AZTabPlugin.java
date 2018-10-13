@@ -92,6 +92,13 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         public void onPacketSending (PacketEvent event) {
             AZTabPlugin pl = (AZTabPlugin) this.plugin;
             
+            
+            Player playerDestination = event.getPlayer();
+            if(playerDestination==null) return;
+            if(playerDestination.hasPermission("aztectabcompleter.bypass")) return;
+            
+            
+            
             if(!pl.enabled) return;
             pl.log("Intercepted Commands packet, filtering...");
             
@@ -116,7 +123,6 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.COMMANDS);
             packet.getSpecificModifier(RootCommandNode.class).write(0, rcn);//write the modified root object into a new packet
             try{
-                Player playerDestination = event.getPlayer();
                 if(playerDestination==null){
                     pl.log("Could not resend to player (null) - they logged out too soon?");
                     return;
