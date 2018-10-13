@@ -108,7 +108,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             RootCommandNode rcn = epacket.getSpecificModifier(RootCommandNode.class).read(0);//get the Root object
             //this.plugin.getLogger().info("RCN Name: "+rcn.getName());
             //this.plugin.getLogger().info("RCN Usage: "+rcn.getUsageText());
-            
+            @SuppressWarnings("unchecked")
             Collection<CommandNode<Object>> children = rcn.getChildren();
             //this.plugin.getLogger().info("RCN Children: "+children.size());
             Iterator<CommandNode<Object>> iterator = children.iterator();
