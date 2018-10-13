@@ -123,10 +123,6 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.COMMANDS);
             packet.getSpecificModifier(RootCommandNode.class).write(0, rcn);//write the modified root object into a new packet
             try{
-                if(playerDestination==null){
-                    pl.log("Could not resend to player (null) - they logged out too soon?");
-                    return;
-                }
                 try{
                     ProtocolLibrary.getProtocolManager().sendServerPacket(playerDestination, packet, false);//send packet - disable further filtering.
                 }catch(IllegalArgumentException e){
