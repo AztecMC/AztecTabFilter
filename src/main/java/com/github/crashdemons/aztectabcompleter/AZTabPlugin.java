@@ -121,13 +121,11 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.COMMANDS);
             packet.getSpecificModifier(RootCommandNode.class).write(0, rcn);//write the modified root object into a new packet
             try{
-                try{
-                    ProtocolLibrary.getProtocolManager().sendServerPacket(playerDestination, packet, false);//send packet - disable further filtering.
-                }catch(IllegalArgumentException e){
-                    String name = playerDestination.getName();
-                    if(name==null) name = "[null]";
-                    pl.log("Problem sending packet to " + name +" "+playerDestination.getUniqueId());
-                }
+                ProtocolLibrary.getProtocolManager().sendServerPacket(playerDestination, packet, false);//send packet - disable further filtering.
+            }catch(IllegalArgumentException e){
+                String name = playerDestination.getName();
+                if(name==null) name = "[null]";
+                pl.log("Problem sending packet to " + name +" "+playerDestination.getUniqueId());
             }catch(InvocationTargetException e){
                 e.printStackTrace();
             }
