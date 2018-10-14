@@ -1,4 +1,4 @@
-#Defines commands visible to all users
+#Defines command suggestions visible by whitelist
 visible-commands:
     - tpahere
     - tpaccept
@@ -16,4 +16,24 @@ visible-commands:
     - me
     - afk
     - suicide
+
+#Defines command suggestions not provided by blacklist
+#by default, this overrides visible-commands
+invisible-commands:
+    - execute
+    - testfor
+    - particle
+
+
+#defines the order used to filter commands, each filtering method is subtractive from the last
+#valid filtering mods:
+#   permission: filters out commands the user does not have permission to (does not filter commands without properly defined permissions)
+#               this generally should not be used since many plugins handle their own permissions or don't define any.
+#   whitelist: filters out commands that do NOT appear in 'visible-commands'
+#   blacklist: filters out commands that DO appear in 'invisible-commands'
+# use the following to enable classic behavior
+#filter-order: [whitelist]
+filter-order: [blacklist,whitelist]
+
+        
     

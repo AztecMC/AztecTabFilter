@@ -12,9 +12,10 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.github.crashdemons.aztectabcompleter.filters.FilterArgs;
+import com.github.crashdemons.aztectabcompleter.filters.FilterSet;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -33,12 +34,16 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author crash
  */
 public class AZTabPlugin extends JavaPlugin implements Listener {
+    //internal variables
     private ProtocolManager protocolManager;
+    private FilterSet filters;
+    
+    //runtime behavior variables
     public volatile boolean enabled = false;
-    private volatile HashSet<String> visibleCommands;
+    
 
     public AZTabPlugin() {
-        this.visibleCommands = new HashSet<>();
+        filters = new FilterSet(this);
     }
     
     private void log(String s){
@@ -48,7 +53,9 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     private void loadConfig(){
         saveDefaultConfig();//fails silently if config exists
         reloadConfig();
-        visibleCommands = new HashSet<>( getConfig().getStringList("visible-commands") );
+        
+        filters.load(getConfig());
+        
     }
     
     
@@ -64,7 +71,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     public void onEnable() {
         log("Enabling... v"+this.getDescription().getVersion());
         loadConfig();
-        log("Loaded "+visibleCommands.size()+" visible commands.");
+        log("Loaded config.");
         getServer().getPluginManager().registerEvents(this, this);
         protocolManager = ProtocolLibrary.getProtocolManager();
         createInitialCommandsFilter();
@@ -79,11 +86,12 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         if (cmd.getName().equalsIgnoreCase("aztabreload")) {
             if(!sender.hasPermission("aztectabcompleter.reload")){ sender.sendMessage("You don't have permission to do this."); return true; }
             loadConfig();
-            sender.sendMessage("[AZTab] Config reloaded with "+visibleCommands.size()+" commands.");
+            sender.sendMessage("[AZTab] Config reloaded.");
             return true;
         }
         return false;
     }
+    
 
     private void createInitialCommandsFilter(){
         protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.HIGHEST, new PacketType[] { PacketType.Play.Server.COMMANDS }) {
@@ -114,7 +122,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                 CommandNode<Object> cn = iterator.next();
                 //this.plugin.getLogger().info("   CN Name: "+cn.getName());
                 //this.plugin.getLogger().info("   CN Usage: "+cn.getUsageText());
-                if( ! visibleCommands.contains(cn.getName()) )
+                if(!filters.filter(new FilterArgs(playerDestination,cn.getName())))
                     iterator.remove();
             }
            
