@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class FilterSet {
     JavaPlugin plugin;
+    String permission;
     private HashMap<String,Filter> filters;
     
     private List<String> filterOrder;
@@ -29,12 +32,16 @@ public class FilterSet {
     private List<Filter> filtersEnabled;
     private Filter filterAll;
     
+    HashMap<String,FilterSet> filterGroups;
+    
    
     public FilterSet(JavaPlugin pl){
+        permission = null;
         filterOrder = new ArrayList<>();
         visibleCommands = new HashSet<>();
         invisibleCommands = new HashSet<>();
         filtersEnabled = new ArrayList<>();
+        filterGroups = new HashMap<>();
         
         plugin = pl;
         filters=new HashMap<>();
@@ -43,22 +50,6 @@ public class FilterSet {
         );
         filters.put("blacklist", 
                 args-> !invisibleCommands.contains(args.getCommand()) 
-        );
-        filters.put("permission", 
-                args-> {
-                    Player destination = args.getDestination();
-                    String command = args.getCommand();
-                    if(destination!=null){
-                        PluginCommand pc = Bukkit.getPluginCommand(command);
-                        if(pc!=null){
-                            String perm = pc.getPermission();
-                            if(perm!=null){
-                                return destination.hasPermission(perm);
-                            }
-                        }
-                    }
-                    return true;
-                }
         );
         filterAll = args -> {
             for(Filter filter : filtersEnabled){
@@ -74,7 +65,7 @@ public class FilterSet {
     private void log(String s){ if(plugin!=null) plugin.getLogger().info(s); }
     
     
-    public void load(FileConfiguration config){
+    public void load(ConfigurationSection config){
         try{
             visibleCommands = new HashSet<>( config.getStringList("visible-commands") );
         }catch(Exception e){
@@ -109,6 +100,25 @@ public class FilterSet {
                 filtersEnabled.add(filter);
             }
         }
+        
+        filterGroups.clear();
+        ConfigurationSection groups = config.getConfigurationSection("groups");
+        if(groups==null){
+            plugin.getLogger().warning("No default groups were present!");
+            return;
+        }
+        Set<String> groupnames = groups.getKeys(false);
+        log(""+groupnames.size());
+        log(groupnames.toString());
+        for(String groupname : groupnames){
+            ConfigurationSection groupConfig = groups.getConfigurationSection(groupname);
+            FilterSet filterGroup = new FilterSet(this.plugin);
+            filterGroup.load(groupConfig);
+            filterGroups.put(groupname, filterGroup);
+        }
+        
+        
+        
         log("Loaded "+filtersEnabled.size()+" filters.");
     }
 }

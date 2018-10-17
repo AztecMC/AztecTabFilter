@@ -13,8 +13,8 @@ import org.bukkit.entity.Player;
  * Semantic-sugar for Predicate syntax.
  * 
  * A filter is defined as a conditional check of filter arguments with the following implications:
- *   Filter returns True: the command has passed filtering and should remain/be allowed to the next filter.
- *   Filter returns False: the command has failed filtering and should be removed/blocked.
+   Filter returns True: the command has passed filtering and should remain/be allowed to the next filter.
+   Filter returns False: the command has failed filtering and should be removed/blocked.
  * @author crash
  */
 public interface Filter extends Predicate<FilterArgs> {
