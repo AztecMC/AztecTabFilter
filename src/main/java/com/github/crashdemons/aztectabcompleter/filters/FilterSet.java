@@ -173,6 +173,7 @@ public class FilterSet {
             filterGroup.loadLists(groupConfig, false);
             filterGroups.put(groupname, filterGroup);
         }
+        log("Loaded "+filterGroups.size()+" groups.");
     }
     
     public void load(ConfigurationSection config){//detect group load and don't load nested groups etc.
