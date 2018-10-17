@@ -25,8 +25,10 @@ invisible-commands:
     - particle
 
 #defines groups that have differing command whitelists and blacklists
-#give group permission with aztectabcompleter.group.group-name-here
+#give group permission with "aztectabcompleter.group.group-name-here"
 #all applicable groups to a user will be checked for blacklist and whitelist matches if enabled in filter-order
+#note: groups only have visible and invisible command lists, they do not have their own filter-order or default action.
+#if you want a user to have multiple group's commands, give them the permission for each
 groups:
     chatmod:
         visible-commands:
@@ -55,9 +57,7 @@ groups:
 #                     process the 'visible-commands' for the group as described above
 #   group-blacklists: for each group the user has the "aztectabcompleter.group.group-name-here" permission for:
 #                     process the 'invisible-commands' for the group as described above
-# use the following configuration to enable classic behavior:
-#filter-order: [whitelist]
-#default configuration:
+# default configuration:
 #filter-order: [blacklist,group-blacklists,whitelist,group-whitelists]
 filter-order: [blacklist,group-blacklists,whitelist,group-whitelists]
 
@@ -69,3 +69,9 @@ filter-order: [blacklist,group-blacklists,whitelist,group-whitelists]
 #filter-default: DENY_FINAL
 filter-default: DENY_FINAL
 
+
+
+# use the following configuration to enable classic behavior:
+#filter-order: [whitelist]
+#filter-default: DENY_FINAL
+#this will disable blacklists, groups, and make the default action to deny any non-matching entries.
