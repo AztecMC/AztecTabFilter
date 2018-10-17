@@ -135,14 +135,18 @@ public class FilterSet {
             if(logoutput) log("Loaded filter-order: "+order.toString());
             return order;
         }else{
-            if(logoutput) plugin.getLogger().warning("No filter-order defined.");
-            return null;
+            if(logoutput) plugin.getLogger().warning("No filter-order defined, using default.");
+            return config.getDefaultSection().getStringList("filter-order");
         }
     }
     private void buildFilterOrder(List<String> filterOrder){
         //build filter order list
         filtersEnabled.clear();
+        if(filterOrder==null) return;
         for(String filterName : filterOrder){
+            System.out.println("build filter name: "+filterName);
+            System.out.println(""+filters);
+            System.out.println(""+filters.size());
             Filter filter = filters.get(filterName);
             if(filter == null){
                 plugin.getLogger().warning("Unsupported filter: "+filterName);

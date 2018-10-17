@@ -51,7 +51,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         getLogger().info(s);
     }
     
-    private void loadConfig(){.
+    private void loadConfig(){
         saveDefaultConfig();//fails silently if config exists
         reloadConfig();
         
