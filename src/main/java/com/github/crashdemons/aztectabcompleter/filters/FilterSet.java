@@ -124,7 +124,7 @@ public class FilterSet {
         try{
             invisibleCommands = new HashSet<>( config.getStringList("invisible-commands") );
         }catch(Exception e){
-            if(logoutput) log("error loading invisible-commands , skipping.");
+            if(logoutput) log("error loading invisible-commands, skipping.");
         }
         if(logoutput) log("Loaded "+invisibleCommands.size()+" blacklist entries.");
     }
@@ -144,9 +144,9 @@ public class FilterSet {
         filtersEnabled.clear();
         if(filterOrder==null) return;
         for(String filterName : filterOrder){
-            System.out.println("build filter name: "+filterName);
-            System.out.println(""+filters);
-            System.out.println(""+filters.size());
+            //System.out.println("build filter name: "+filterName);
+            //System.out.println(""+filters);
+            //System.out.println(""+filters.size());
             Filter filter = filters.get(filterName);
             if(filter == null){
                 plugin.getLogger().warning("Unsupported filter: "+filterName);
@@ -163,8 +163,8 @@ public class FilterSet {
             return;
         }
         Set<String> groupnames = groups.getKeys(false);
-        if(logoutput) log(""+groupnames.size());
-        if(logoutput) log(groupnames.toString());
+        //if(logoutput) log(""+groupnames.size());
+        //if(logoutput) log(groupnames.toString());
         for(String groupname : groupnames){
             ConfigurationSection groupConfig = groups.getConfigurationSection(groupname);
             FilterSet filterGroup = new FilterSet(this.plugin);
