@@ -26,21 +26,19 @@ public class FilterSet {
     String permission;
     private HashMap<String,Filter> filters;
     
-    private List<String> filterOrder;
     private volatile HashSet<String> visibleCommands;
     private volatile HashSet<String> invisibleCommands;
-    private List<Filter> filtersEnabled;
+    private HashMap<String,Filter> filtersEnabled;
     private Filter filterAll;
     
     HashMap<String,FilterSet> filterGroups;
     
    
     public FilterSet(JavaPlugin pl){
-        permission = null;
-        filterOrder = new ArrayList<>();
+        permission = null;//TODO set permission for groups
         visibleCommands = new HashSet<>();
         invisibleCommands = new HashSet<>();
-        filtersEnabled = new ArrayList<>();
+        filtersEnabled = new HashMap<>();
         filterGroups = new HashMap<>();
         
         plugin = pl;
@@ -52,7 +50,7 @@ public class FilterSet {
                 args-> !invisibleCommands.contains(args.getCommand()) 
         );
         filterAll = args -> {
-            for(Filter filter : filtersEnabled){
+            for(Filter filter : filtersEnabled.values()){
                 if(!filter.test(args)) return false;
             }
             return true;
@@ -65,39 +63,45 @@ public class FilterSet {
     private void log(String s){ if(plugin!=null) plugin.getLogger().info(s); }
     
     
-    public void load(ConfigurationSection config){
+    
+    private void loadLists(ConfigurationSection config, boolean logoutput){
         try{
             visibleCommands = new HashSet<>( config.getStringList("visible-commands") );
         }catch(Exception e){
              log("error loading visible-commands, skipping.");
         }
-        log("Loaded "+visibleCommands.size()+" whitelist entries.");
-        
+        if(logoutput) log("Loaded "+visibleCommands.size()+" whitelist entries.");
         
         try{
             invisibleCommands = new HashSet<>( config.getStringList("invisible-commands") );
         }catch(Exception e){
             log("error loading invisible-commands , skipping.");
         }
-        log("Loaded "+invisibleCommands.size()+" blacklist entries.");
+        if(logoutput) log("Loaded "+invisibleCommands.size()+" blacklist entries.");
+    }
+    
+    public void load(ConfigurationSection config){//detect group load and don't load nested groups etc.
+        loadLists(config,true);
         
+        //get filter order string.
+        List<String> filterOrder=new ArrayList<>();
         try{
             filterOrder = config.getStringList("filter-order");
         }catch(Exception e){
             log("error loading filter-order, setting default.");
             filterOrder.clear();
             filterOrder.add("blacklist");
-            filterOrder.add("permission");
             filterOrder.add("whitelist");
         }
         
+        //build filter order list
         filtersEnabled.clear();
         for(String filterName : filterOrder){
             Filter filter = filters.get(filterName);
             if(filter == null){
                 plugin.getLogger().warning("Unsupported filter: "+filterName);
             }else{
-                filtersEnabled.add(filter);
+                filtersEnabled.put(filterName,filter);
             }
         }
         
