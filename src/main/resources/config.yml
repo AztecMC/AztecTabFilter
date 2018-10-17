@@ -1,4 +1,4 @@
-#Defines command suggestions visible by whitelist
+#Defines command suggestions visible by whitelist for the default group
 visible-commands:
     - tpahere
     - tpaccept
@@ -17,23 +17,55 @@ visible-commands:
     - afk
     - suicide
 
-#Defines command suggestions not provided by blacklist
-#by default, this overrides visible-commands
+#Defines command suggestions that should not be visible by anyone (by blacklist)
+#by default, this overrides visible-commands and group visibility
 invisible-commands:
     - execute
     - testfor
     - particle
 
+#defines groups that have differing command whitelists and blacklists
+#give group permission with aztectabcompleter.group.group-name-here
+#all applicable groups to a user will be checked for blacklist and whitelist matches if enabled in filter-order
+groups:
+    chatmod:
+        visible-commands:
+            - nick
+            - kick
+            - mute
+            - seen
+        invisible-commands:
+            - something
+    moderator:
+        visible-commands:
+            - gms
+            - gmsp
+            - tp
+        invisible-commands:
+            - somethingelse
+
+    
+
 
 #defines the order used to filter commands, each filtering method is subtractive from the last
 #valid filtering mods:
-#   permission: filters out commands the user does not have permission to (does not filter commands without properly defined permissions)
-#               this generally should not be used since many plugins handle their own permissions or don't define any.
-#   whitelist: filters out commands that do NOT appear in 'visible-commands'
-#   blacklist: filters out commands that DO appear in 'invisible-commands'
-# use the following to enable classic behavior
+#   whitelist: allows any command that appears in 'visible-commands', skips other filtering if matched
+#   blacklist: denies any command that appears in 'invisible-commands', skips other filtering if matched
+#   group-whitelists: for each group the user has the "aztectabcompleter.group.group-name-here" permission for:
+#                     process the 'visible-commands' for the group as described above
+#   group-blacklists: for each group the user has the "aztectabcompleter.group.group-name-here" permission for:
+#                     process the 'invisible-commands' for the group as described above
+# use the following configuration to enable classic behavior:
 #filter-order: [whitelist]
-filter-order: [blacklist,whitelist]
+#default configuration:
+#filter-order: [blacklist,group-blacklists,whitelist,group-whitelists]
+filter-order: [blacklist,group-blacklists,whitelist,group-whitelists]
 
-        
-    
+#default behavior when no filters match the command
+#Default
+#Possible values:
+#   DENY_FINAL : deny the command from being suggested
+#   ALLOW_FINAL: allow the command to be suggested
+#filter-default: DENY_FINAL
+filter-default: DENY_FINAL
+

@@ -5,19 +5,20 @@
  */
 package com.github.crashdemons.aztectabcompleter.filters;
 
-import com.github.crashdemons.util.Pair;
-import java.util.function.Predicate;
-import org.bukkit.entity.Player;
-
 /**
- * Semantic-sugar for Predicate syntax.
- * 
- * A filter is defined as a conditional check of filter arguments with the following implications:
-   Filter returns True: the command has passed filtering and should remain/be allowed to the next filter.
-   Filter returns False: the command has failed filtering and should be removed/blocked.
+ *
  * @author crash
  */
-public interface Filter extends Predicate<FilterArgs> {
-    @Override
-    public boolean test(FilterArgs pair);
+public class Filter {
+    FilterCondition condition;
+    FilterResult passResult;
+    FilterResult failResult;
+    Filter(FilterResult passResult, FilterResult failResult, FilterCondition condition){
+        this.condition=condition;
+        this.passResult=passResult;
+        this.failResult=failResult;
+    }
+    FilterResult test(FilterArgs args){
+        return condition.test(args) ? passResult : failResult;
+    }
 }

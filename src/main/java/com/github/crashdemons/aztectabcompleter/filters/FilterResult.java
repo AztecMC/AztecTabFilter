@@ -10,7 +10,36 @@ package com.github.crashdemons.aztectabcompleter.filters;
  * @author crash
  */
 public enum FilterResult {
-    PASS_AND_CONTINUE,
-    PASS_AND_EXIT,
-    FAIL_AND_EXIT
+    SKIP(1,false,true,true),
+    ALLOW_AND_CONTINUE(2,false,true,false),
+    DENY_AND_CONTINUE(3,false,false,false),
+    ALLOW_FINAL(4,true,true,false),
+    DENY_FINAL(5,true,false,false);
+    
+    
+    public final int priority;
+    public final boolean isFinal;
+    public final boolean isAllowed;
+    public final boolean isSkipped;
+    
+    
+    FilterResult(int priority,boolean _final, boolean allowed, boolean skipped){
+        this.priority=priority;
+        isFinal = _final;
+        isAllowed=allowed;
+        isSkipped=skipped;
+    }
+    
+    public FilterResult finalize(FilterResult defaultResult){
+        if(isSkipped) return defaultResult;
+        return isAllowed ? ALLOW_FINAL : DENY_FINAL;
+    }
+    public boolean finalizeBoolean(boolean defaultResult){
+        if(isSkipped) return defaultResult;
+        return isAllowed;
+    }
+    
+    public boolean overrides(FilterResult otherResult){
+        return priority > otherResult.priority;
+    }
 }

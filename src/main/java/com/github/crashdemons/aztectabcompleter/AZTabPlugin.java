@@ -13,6 +13,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.github.crashdemons.aztectabcompleter.filters.FilterArgs;
+import com.github.crashdemons.aztectabcompleter.filters.FilterResult;
 import com.github.crashdemons.aztectabcompleter.filters.FilterSet;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
@@ -50,7 +51,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         getLogger().info(s);
     }
     
-    private void loadConfig(){
+    private void loadConfig(){.
         saveDefaultConfig();//fails silently if config exists
         reloadConfig();
         
@@ -122,7 +123,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                 CommandNode<Object> cn = iterator.next();
                 //this.plugin.getLogger().info("   CN Name: "+cn.getName());
                 //this.plugin.getLogger().info("   CN Usage: "+cn.getUsageText());
-                if(!filters.filter(new FilterArgs(playerDestination,cn.getName())))
+                if(!filters.filter(new FilterArgs(playerDestination,cn.getName())).isAllowed)
                     iterator.remove();
             }
            

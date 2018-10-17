@@ -22,7 +22,10 @@ permissions:
     description: gives all permissions of the AZTab
     default: op
     children:
-      aztectabcompleter.reload:
-        description: Gives permission to reload AZTab config
-      aztectabcompleter.bypass:
-        description: Gives permission to bypass command filtering by AZTab
+        aztectabcompleter.reload: true
+        aztectabcompleter.bypass: true
+aztectabcompleter.reload:
+    description: Gives permission to reload AZTab config
+aztectabcompleter.bypass:
+    description: Gives permission to bypass command filtering by AZTab
+
