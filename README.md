@@ -8,7 +8,7 @@ Currently in 1.13, no `tab-complete` setting seems to stop all commands from bei
 *Note:* Commands can only be removed from suggestions by this plugin, if the server does not already suggest it without the plugin, this will not add the suggestion.
 
 
-## Downloading the Plugin
+## Downloading the Plugin pre-built
 You can find released JARs (that can be added to your plugins folder) on the [Releases tab](https://github.com/crashdemons/AztecTabCompleter/releases) of this project.
 
 If you want something a bit more shiny, you can check out our [development builds](https://ci.meme.tips/job/AztecTabCompleter/) available through Jenkins CI.
