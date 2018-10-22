@@ -6,3 +6,14 @@ This is intended to be used spigot setting `tab-complete: 0` which enables all s
 Currently in 1.13, no `tab-complete` setting seems to stop all commands from being suggested after typing `/<tab>`, so this plugin exists to enforce filtering suggestions.
 
 *Note:* Commands can only be removed from suggestions by this plugin, if the server does not already suggest it without the plugin, this will not add the suggestion.
+
+
+## Downloading the Plugin
+You can find released JARs (that can be added to your plugins folder) on the [Releases tab](https://github.com/crashdemons/AztecTabCompleter/releases) of this project.
+
+If you want something a bit more shiny, you can check out our [development builds](https://ci.meme.tips/job/AztecTabCompleter/) available through Jenkins CI.
+
+## Building the Project yourself
+We've recently moved to using Maven! If you used build.xml or a Netbeans Project before, you may need to import the project again as a maven project / from existing POM.
+
+[This document](https://github.com/crashdemons/Notes/blob/master/Importing_Maven_Projects.md) may help you import the project in your IDE.
