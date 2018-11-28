@@ -70,8 +70,11 @@ filter-default: DENY_FINAL
 #defines the amount of time that a filtered Commands packet can wait in queue before being sent to a joining user
 queue-expiration-seconds: 60
 
-#defines the amount of time that the plugin will clean up the queue of expired entries.
+#defines the interval of time that the plugin will clean up the queue of expired entries
 queue-expiration-check-seconds: 60
+
+#defines the interval of time that the plugin will try to send unsent COMMANDS updates (generally from dimension changes, etc)
+queue-try-unsent-seconds: 10
 
 
 

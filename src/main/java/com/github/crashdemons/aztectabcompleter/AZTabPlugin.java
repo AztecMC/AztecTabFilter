@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,6 +56,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     //don't store Player from packet event since it will be a "temporary" player object that doesn't support every method.
     
     private BukkitTask expireQueueEntriesTask=null;
+    private BukkitTask sendQueueEntriesTask=null;
     
     private long expirationSeconds=1;
     
@@ -97,6 +99,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     public void onDisable() {
         log("Disabling...");
         if(expireQueueEntriesTask!=null) expireQueueEntriesTask.cancel();
+        if(sendQueueEntriesTask!=null) sendQueueEntriesTask.cancel();
         enabled=false;
         log("Disabed.");
     }
@@ -118,6 +121,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         log("commands queue check interval: "+expirationInterval+"s");
         
         if(expireQueueEntriesTask!=null) expireQueueEntriesTask.cancel();
+        if(sendQueueEntriesTask!=null) sendQueueEntriesTask.cancel();
         expireQueueEntriesTask = new BukkitRunnable() {
             public void run() {
                 LocalDateTime now = LocalDateTime.now();
@@ -125,6 +129,22 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                 );
             }
         }.runTaskTimer(this,expirationInterval*TPS,expirationInterval*TPS);
+        
+        long tryUnsentPacketsInterval=getConfig().getLong("queue-try-unsent-seconds");
+        log("commands queue unsent retry time: "+tryUnsentPacketsInterval+"s");
+        sendQueueEntriesTask = new BukkitRunnable() {
+            public void run() {
+                packetQueue.entrySet().stream().forEach(
+                        (entry)->{
+                            Player player = Bukkit.getPlayer(entry.getKey());
+                            if(player==null) return;
+                            if(!player.isOnline()) return;
+                            log("trying unsent packet");
+                            processQueueFor(player);
+                        }
+                );
+            }
+        }.runTaskTimer(this,tryUnsentPacketsInterval*TPS,tryUnsentPacketsInterval*TPS);
         
         
         enabled=true;
@@ -149,6 +169,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         //log("playerjoinevent");
         if(!enabled) return;
         Player player = event.getPlayer();
+        log("trying packets for joined player");
         processQueueFor(player);
     }
     
@@ -157,12 +178,19 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         UUID uuid = playerDestination.getUniqueId();
         if(uuid==null) return;
         //log("Player joined: "+uuid);
-        if(playerDestination.hasPermission("aztectabcompleter.bypass")) return;
+        boolean bypassFiltering=playerDestination.hasPermission("aztectabcompleter.bypass");
         Pair<LocalDateTime,PacketContainer> record = packetQueue.remove(uuid);
         if(record==null) return;
         PacketContainer packet = record.getValue();
         if(packet==null) return;
-        PacketContainer packet_filtered=filterPacketFor(playerDestination,packet);
+        PacketContainer packet_filtered;
+        if(bypassFiltering){
+            packet_filtered=packet;
+            log("player is exempt from command filtering");
+        }else{
+            packet_filtered=filterPacketFor(playerDestination,packet);
+            log("filtered packet for player");
+        }
         sendPacket(playerDestination,packet_filtered);
     }
     private void queuePacketFor(Player playerDestination, PacketContainer epacket){
