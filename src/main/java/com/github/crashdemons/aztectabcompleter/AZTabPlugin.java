@@ -114,6 +114,8 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         
         expirationSeconds = getConfig().getLong("queue-expiration-seconds");
         long expirationInterval = getConfig().getLong("queue-expiration-check-seconds");
+        log("commands queue expiration time: "+expirationSeconds+"s");
+        log("commands queue check interval: "+expirationInterval+"s");
         
         if(expireQueueEntriesTask!=null) expireQueueEntriesTask.cancel();
         expireQueueEntriesTask = new BukkitRunnable() {
