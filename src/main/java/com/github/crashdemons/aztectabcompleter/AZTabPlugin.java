@@ -51,7 +51,8 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     //runtime behavior variables
     public volatile boolean enabled = false;
     
-    private ConcurrentHashMap<UUID,Pair<LocalDateTime,PacketContainer>> packetQueue = new ConcurrentHashMap<>();//don't store Temporary Player object
+    private ConcurrentHashMap<UUID,Pair<LocalDateTime,PacketContainer>> packetQueue = new ConcurrentHashMap<>();
+    //don't store Player from packet event since it will be a "temporary" player object that doesn't support every method.
     
     private BukkitTask expireQueueEntriesTask=null;
     
@@ -146,15 +147,21 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         //log("playerjoinevent");
         if(!enabled) return;
         Player player = event.getPlayer();
-        if(player==null) return;
-        UUID uuid = player.getUniqueId();
+        processQueueFor(player);
+    }
+    
+    private void processQueueFor(Player playerDestination){
+        if(playerDestination==null) return;
+        UUID uuid = playerDestination.getUniqueId();
         if(uuid==null) return;
         //log("Player joined: "+uuid);
-        
+        if(playerDestination.hasPermission("aztectabcompleter.bypass")) return;
         Pair<LocalDateTime,PacketContainer> record = packetQueue.remove(uuid);
         if(record==null) return;
         PacketContainer packet = record.getValue();
-        if(packet!=null) sendPacket(player,packet);
+        if(packet==null) return;
+        PacketContainer packet_filtered=filterPacketFor(playerDestination,packet);
+        sendPacket(playerDestination,packet_filtered);
     }
     
     private PacketContainer filterPacketFor(Player playerDestination, PacketContainer epacket){
@@ -189,17 +196,17 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             if(!pl.enabled) return;
             Player playerDestination = event.getPlayer();
             if(playerDestination==null) return;
-            if(playerDestination.hasPermission("aztectabcompleter.bypass")) return;
+            //if(playerDestination.hasPermission("aztectabcompleter.bypass")) return;
             
             
             pl.log("Intercepted Commands packet, filtering...");
             
             PacketContainer epacket = event.getPacket();//get the outgoing spigot packet containing the command list
-            PacketContainer packet = filterPacketFor(playerDestination,epacket);
+            //PacketContainer packet = filterPacketFor(playerDestination,epacket);
             
             UUID uuid = playerDestination.getUniqueId();
             packetQueue.put(uuid, new Pair<LocalDateTime,PacketContainer>(LocalDateTime.now(),epacket));
-            pl.log("Queued packet for "+uuid);
+            pl.log("Queued commands for "+uuid);
             //sendPacket(playerDestination, packet);
             
             event.setCancelled(true);//prevent default tabcomplete
