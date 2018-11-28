@@ -67,7 +67,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         String name = playerDestination.getName();
         if(name==null) name = "[null]";
         try{
-            log("Sending filtered commands to "+name);
+            log("Sending commands to "+name);
             ProtocolLibrary.getProtocolManager().sendServerPacket(playerDestination, packet, false);//send packet - disable further filtering.
             return true;
         }catch(IllegalArgumentException e){
@@ -176,6 +176,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     private void processQueueFor(Player playerDestination){
         if(playerDestination==null) return;
         UUID uuid = playerDestination.getUniqueId();
+        String name = playerDestination.getName();
         if(uuid==null) return;
         //log("Player joined: "+uuid);
         boolean bypassFiltering=playerDestination.hasPermission("aztectabcompleter.bypass");
@@ -186,10 +187,10 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         PacketContainer packet_filtered;
         if(bypassFiltering){
             packet_filtered=packet;
-            log("player is exempt from command filtering");
+            log("player "+name+" is exempt from command filtering");
         }else{
             packet_filtered=filterPacketFor(playerDestination,packet);
-            log("filtered packet for player");
+            log("filtered packet for player "+name);
         }
         sendPacket(playerDestination,packet_filtered);
     }
