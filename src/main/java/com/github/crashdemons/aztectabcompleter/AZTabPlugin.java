@@ -165,6 +165,11 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         PacketContainer packet_filtered=filterPacketFor(playerDestination,packet);
         sendPacket(playerDestination,packet_filtered);
     }
+    private void queuePacketFor(Player playerDestination, PacketContainer epacket){
+        UUID uuid = playerDestination.getUniqueId();
+        packetQueue.put(uuid, new Pair<LocalDateTime,PacketContainer>(LocalDateTime.now(),epacket));
+        log("Queued commands for "+uuid);
+    }
     
     private PacketContainer filterPacketFor(Player playerDestination, PacketContainer epacket){
         //the new Commands packet syntax contains a RootNode object containing multiple CommandNode objects inside in the form of a list
@@ -198,18 +203,11 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             if(!pl.enabled) return;
             Player playerDestination = event.getPlayer();
             if(playerDestination==null) return;
-            //if(playerDestination.hasPermission("aztectabcompleter.bypass")) return;
-            
             
             pl.log("Intercepted Commands packet, filtering...");
             
             PacketContainer epacket = event.getPacket();//get the outgoing spigot packet containing the command list
-            //PacketContainer packet = filterPacketFor(playerDestination,epacket);
-            
-            UUID uuid = playerDestination.getUniqueId();
-            packetQueue.put(uuid, new Pair<LocalDateTime,PacketContainer>(LocalDateTime.now(),epacket));
-            pl.log("Queued commands for "+uuid);
-            //sendPacket(playerDestination, packet);
+            queuePacketFor(playerDestination,epacket);
             
             event.setCancelled(true);//prevent default tabcomplete
             
