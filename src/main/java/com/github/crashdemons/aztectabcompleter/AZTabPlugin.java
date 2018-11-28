@@ -24,6 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -139,13 +141,19 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         return false;
     }
    
+    @EventHandler(priority=EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event){
+        //log("playerjoinevent");
         if(!enabled) return;
         Player player = event.getPlayer();
         if(player==null) return;
         UUID uuid = player.getUniqueId();
         if(uuid==null) return;
-        PacketContainer packet = packetQueue.remove(uuid).getValue();
+        //log("Player joined: "+uuid);
+        
+        Pair<LocalDateTime,PacketContainer> record = packetQueue.remove(uuid);
+        if(record==null) return;
+        PacketContainer packet = record.getValue();
         if(packet!=null) sendPacket(player,packet);
     }
     
