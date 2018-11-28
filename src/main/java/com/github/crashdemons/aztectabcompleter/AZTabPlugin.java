@@ -13,16 +13,22 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.github.crashdemons.aztectabcompleter.filters.FilterArgs;
-import com.github.crashdemons.aztectabcompleter.filters.FilterResult;
 import com.github.crashdemons.aztectabcompleter.filters.FilterSet;
+import com.github.crashdemons.util.Pair;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -36,13 +42,37 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class AZTabPlugin extends JavaPlugin implements Listener {
     //internal variables
+    private static final int TPS = 20;
     private ProtocolManager protocolManager;
     private FilterSet filters;
     
     //runtime behavior variables
     public volatile boolean enabled = false;
     
-
+    private ConcurrentHashMap<UUID,Pair<LocalDateTime,PacketContainer>> packetQueue = new ConcurrentHashMap<>();//don't store Temporary Player object
+    
+    private BukkitTask expireQueueEntriesTask=null;
+    
+    private long expirationSeconds=1;
+    
+    
+    private boolean sendPacket(Player playerDestination, PacketContainer packet){
+        if(playerDestination==null) return false;
+        if(!playerDestination.isOnline()) return false;
+        String name = playerDestination.getName();
+        if(name==null) name = "[null]";
+        try{
+            log("Sending filtered commands to "+name);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(playerDestination, packet, false);//send packet - disable further filtering.
+            return true;
+        }catch(IllegalArgumentException e){
+            log("Problem sending packet to " + name +" "+playerDestination.getUniqueId());
+        }catch(InvocationTargetException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
     public AZTabPlugin() {
         filters = new FilterSet(this);
     }
@@ -56,7 +86,6 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         reloadConfig();
         
         filters.load(getConfig());
-        
     }
     
     
@@ -64,6 +93,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         log("Disabling...");
+        if(expireQueueEntriesTask!=null) expireQueueEntriesTask.cancel();
         enabled=false;
         log("Disabed.");
     }
@@ -77,6 +107,21 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         protocolManager = ProtocolLibrary.getProtocolManager();
         createInitialCommandsFilter();
         //createTabCompleteOverride();
+        
+        
+        expirationSeconds = getConfig().getLong("queue-expiration-seconds");
+        long expirationInterval = getConfig().getLong("queue-expiration-check-seconds");
+        
+        if(expireQueueEntriesTask!=null) expireQueueEntriesTask.cancel();
+        expireQueueEntriesTask = new BukkitRunnable() {
+            public void run() {
+                LocalDateTime now = LocalDateTime.now();
+                packetQueue.entrySet().removeIf((entry)->entry.getValue().getKey().plusSeconds(expirationSeconds).isBefore(LocalDateTime.now())
+                );
+            }
+        }.runTaskTimer(this,expirationInterval*TPS,expirationInterval*TPS);
+        
+        
         enabled=true;
         log("Enabled.");
     }
@@ -84,6 +129,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if(!enabled) return true;
         if (cmd.getName().equalsIgnoreCase("aztabreload")) {
             if(!sender.hasPermission("aztectabcompleter.reload")){ sender.sendMessage("You don't have permission to do this."); return true; }
             loadConfig();
@@ -91,6 +137,16 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             return true;
         }
         return false;
+    }
+   
+    public void onPlayerJoin(PlayerJoinEvent event){
+        if(!enabled) return;
+        Player player = event.getPlayer();
+        if(player==null) return;
+        UUID uuid = player.getUniqueId();
+        if(uuid==null) return;
+        PacketContainer packet = packetQueue.remove(uuid).getValue();
+        if(packet!=null) sendPacket(player,packet);
     }
     
 
@@ -129,15 +185,12 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
            
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.COMMANDS);
             packet.getSpecificModifier(RootCommandNode.class).write(0, rcn);//write the modified root object into a new packet
-            try{
-                ProtocolLibrary.getProtocolManager().sendServerPacket(playerDestination, packet, false);//send packet - disable further filtering.
-            }catch(IllegalArgumentException e){
-                String name = playerDestination.getName();
-                if(name==null) name = "[null]";
-                pl.log("Problem sending packet to " + name +" "+playerDestination.getUniqueId());
-            }catch(InvocationTargetException e){
-                e.printStackTrace();
-            }
+            
+            UUID uuid = playerDestination.getUniqueId();
+            packetQueue.put(uuid, new Pair<LocalDateTime,PacketContainer>(LocalDateTime.now(),epacket));
+            pl.log("Queued packet for "+uuid);
+            //sendPacket(playerDestination, packet);
+            
             event.setCancelled(true);//prevent default tabcomplete
             
         }
