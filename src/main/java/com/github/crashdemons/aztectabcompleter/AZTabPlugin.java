@@ -157,6 +157,27 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         if(packet!=null) sendPacket(player,packet);
     }
     
+    private PacketContainer filterPacketFor(Player playerDestination, PacketContainer epacket){
+        //the new Commands packet syntax contains a RootNode object containing multiple CommandNode objects inside in the form of a list
+        //CommandNode is difficult to construct, so instead we just selectively remove them from the collection.
+        RootCommandNode rcn = epacket.getSpecificModifier(RootCommandNode.class).read(0);//get the Root object
+        //this.plugin.getLogger().info("RCN Name: "+rcn.getName());
+        //this.plugin.getLogger().info("RCN Usage: "+rcn.getUsageText());
+        @SuppressWarnings("unchecked")
+        Collection<CommandNode<Object>> children = rcn.getChildren();
+        //this.plugin.getLogger().info("RCN Children: "+children.size());
+        Iterator<CommandNode<Object>> iterator = children.iterator();
+        while (iterator.hasNext()) {
+            CommandNode<Object> cn = iterator.next();
+            //this.plugin.getLogger().info("   CN Name: "+cn.getName());
+            //this.plugin.getLogger().info("   CN Usage: "+cn.getUsageText());
+            if(!filters.filter(new FilterArgs(playerDestination,cn.getName())).isAllowed)
+                iterator.remove();
+        }
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.COMMANDS);
+        packet.getSpecificModifier(RootCommandNode.class).write(0, rcn);//write the modified root object into a new packet
+        return packet;
+    }
 
     private void createInitialCommandsFilter(){
         protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.HIGHEST, new PacketType[] { PacketType.Play.Server.COMMANDS }) {
@@ -173,26 +194,8 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             
             pl.log("Intercepted Commands packet, filtering...");
             
-            //the new Commands packet syntax contains a RootNode object containing multiple CommandNode objects inside in the form of a list
-            //CommandNode is difficult to construct, so instead we just selectively remove them from the collection.
             PacketContainer epacket = event.getPacket();//get the outgoing spigot packet containing the command list
-            RootCommandNode rcn = epacket.getSpecificModifier(RootCommandNode.class).read(0);//get the Root object
-            //this.plugin.getLogger().info("RCN Name: "+rcn.getName());
-            //this.plugin.getLogger().info("RCN Usage: "+rcn.getUsageText());
-            @SuppressWarnings("unchecked")
-            Collection<CommandNode<Object>> children = rcn.getChildren();
-            //this.plugin.getLogger().info("RCN Children: "+children.size());
-            Iterator<CommandNode<Object>> iterator = children.iterator();
-            while (iterator.hasNext()) {
-                CommandNode<Object> cn = iterator.next();
-                //this.plugin.getLogger().info("   CN Name: "+cn.getName());
-                //this.plugin.getLogger().info("   CN Usage: "+cn.getUsageText());
-                if(!filters.filter(new FilterArgs(playerDestination,cn.getName())).isAllowed)
-                    iterator.remove();
-            }
-           
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.COMMANDS);
-            packet.getSpecificModifier(RootCommandNode.class).write(0, rcn);//write the modified root object into a new packet
+            PacketContainer packet = filterPacketFor(playerDestination,epacket);
             
             UUID uuid = playerDestination.getUniqueId();
             packetQueue.put(uuid, new Pair<LocalDateTime,PacketContainer>(LocalDateTime.now(),epacket));
