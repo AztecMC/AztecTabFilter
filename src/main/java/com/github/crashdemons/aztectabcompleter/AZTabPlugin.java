@@ -139,7 +139,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                             Player player = Bukkit.getPlayer(entry.getKey());
                             if(player==null) return;
                             if(!player.isOnline()) return;
-                            log("trying unsent packet");
+                            //log("trying unsent packet");
                             processQueueFor(player);
                         }
                 );
@@ -169,7 +169,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         //log("playerjoinevent");
         if(!enabled) return;
         Player player = event.getPlayer();
-        log("trying packets for joined player");
+        //log("trying packets for joined player");
         processQueueFor(player);
     }
     
@@ -187,17 +187,17 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         PacketContainer packet_filtered;
         if(bypassFiltering){
             packet_filtered=packet;
-            log("player "+name+" is exempt from command filtering");
+            //log("player "+name+" is exempt from command filtering");
         }else{
             packet_filtered=filterPacketFor(playerDestination,packet);
-            log("filtered packet for player "+name);
+            //log("filtered packet for player "+name);
         }
         sendPacket(playerDestination,packet_filtered);
     }
     private void queuePacketFor(Player playerDestination, PacketContainer epacket){
         UUID uuid = playerDestination.getUniqueId();
         packetQueue.put(uuid, new Pair<LocalDateTime,PacketContainer>(LocalDateTime.now(),epacket));
-        log("Queued commands for "+uuid);
+        //log("Queued commands for "+uuid);
     }
     
     private PacketContainer filterPacketFor(Player playerDestination, PacketContainer epacket){
@@ -233,7 +233,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             Player playerDestination = event.getPlayer();
             if(playerDestination==null) return;
             
-            pl.log("Intercepted Commands packet, filtering...");
+            //pl.log("Intercepted Commands packet, filtering...");
             
             PacketContainer epacket = event.getPacket();//get the outgoing spigot packet containing the command list
             queuePacketFor(playerDestination,epacket);
