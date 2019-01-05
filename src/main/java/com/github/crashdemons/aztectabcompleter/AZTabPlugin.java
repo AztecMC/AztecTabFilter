@@ -16,10 +16,10 @@ import com.github.crashdemons.aztectabcompleter.filters.FilterArgs;
 import com.github.crashdemons.aztectabcompleter.filters.FilterSet;
 import com.github.crashdemons.util.Pair;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -52,7 +52,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     //runtime behavior variables
     public volatile boolean enabled = false;
     
-    private ConcurrentHashMap<UUID,Pair<LocalDateTime,PacketContainer>> packetQueue = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<InetSocketAddress,Pair<LocalDateTime,PacketContainer>> packetQueue = new ConcurrentHashMap<>();
     //don't store Player from packet event since it will be a "temporary" player object that doesn't support every method.
     
     private BukkitTask expireQueueEntriesTask=null;
@@ -134,6 +134,14 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         log("commands queue unsent retry time: "+tryUnsentPacketsInterval+"s");
         sendQueueEntriesTask = new BukkitRunnable() {
             public void run() {
+                
+                Bukkit.getOnlinePlayers().stream().forEach(
+                        (player) -> {
+                            if(player==null) return;
+                            processQueueFor(player);
+                        }
+                );
+                /*
                 packetQueue.entrySet().stream().forEach(
                         (entry)->{
                             Player player = Bukkit.getPlayer(entry.getKey());
@@ -142,7 +150,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                             //log("trying unsent packet");
                             processQueueFor(player);
                         }
-                );
+                );*/
             }
         }.runTaskTimer(this,tryUnsentPacketsInterval*TPS,tryUnsentPacketsInterval*TPS);
         
@@ -175,12 +183,12 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     
     private void processQueueFor(Player playerDestination){
         if(playerDestination==null) return;
-        UUID uuid = playerDestination.getUniqueId();
+        InetSocketAddress addr = playerDestination.getAddress();
         String name = playerDestination.getName();
-        if(uuid==null) return;
+        if(addr==null) return;
         //log("Player joined: "+uuid);
         boolean bypassFiltering=playerDestination.hasPermission("aztectabcompleter.bypass");
-        Pair<LocalDateTime,PacketContainer> record = packetQueue.remove(uuid);
+        Pair<LocalDateTime,PacketContainer> record = packetQueue.remove(addr);
         if(record==null) return;
         PacketContainer packet = record.getValue();
         if(packet==null) return;
@@ -194,10 +202,15 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         }
         sendPacket(playerDestination,packet_filtered);
     }
-    private void queuePacketFor(Player playerDestination, PacketContainer epacket){
-        UUID uuid = playerDestination.getUniqueId();
-        packetQueue.put(uuid, new Pair<LocalDateTime,PacketContainer>(LocalDateTime.now(),epacket));
+    private boolean queuePacketFor(Player playerDestination, PacketContainer epacket){
+        InetSocketAddress addr = playerDestination.getAddress();
+        if(addr==null){
+            getLogger().warning("Could not queue packet for player with null address: "+playerDestination.toString());
+            return false;
+        }
+        packetQueue.put(addr, new Pair<LocalDateTime,PacketContainer>(LocalDateTime.now(),epacket));
         //log("Queued commands for "+uuid);
+        return true;
     }
     
     private PacketContainer filterPacketFor(Player playerDestination, PacketContainer epacket){
