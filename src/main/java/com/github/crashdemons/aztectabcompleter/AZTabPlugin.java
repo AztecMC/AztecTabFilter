@@ -44,7 +44,7 @@ import org.bukkit.scheduler.BukkitTask;
  * @author crash
  */
 public class AZTabPlugin extends JavaPlugin implements Listener {
-    //internal variables
+    //internal variables 
     private static final int TPS = 20;
     private ProtocolManager protocolManager;
     private FilterSet filters;
@@ -58,7 +58,9 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     private BukkitTask expireQueueEntriesTask=null;
     private BukkitTask sendQueueEntriesTask=null;
     
-    private long expirationSeconds=1;
+    private long expirationSeconds=60;
+    private long expirationInterval=60;
+    private long tryUnsentPacketsInterval=10;
     
     
     private boolean sendPacket(Player playerDestination, PacketContainer packet){
@@ -105,21 +107,28 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     }
     
     @Override
-    public void onEnable() {
-        log("Enabling... v"+this.getDescription().getVersion());
+    public void onLoad() {
+        log("Loading... v"+this.getDescription().getVersion());
         loadConfig();
         log("Loaded config.");
-        getServer().getPluginManager().registerEvents(this, this);
         protocolManager = ProtocolLibrary.getProtocolManager();
+        enabled=true;
+        
         createInitialCommandsFilter();
-        //createTabCompleteOverride();
         
         
         expirationSeconds = getConfig().getLong("queue-expiration-seconds");
-        long expirationInterval = getConfig().getLong("queue-expiration-check-seconds");
+        expirationInterval = getConfig().getLong("queue-expiration-check-seconds");
+        tryUnsentPacketsInterval=getConfig().getLong("queue-try-unsent-seconds");
+        log("commands queue unsent retry time: "+tryUnsentPacketsInterval+"s");
         log("commands queue expiration time: "+expirationSeconds+"s");
         log("commands queue check interval: "+expirationInterval+"s");
         
+    }
+    @Override
+    public void onEnable() {
+        log("Enabling... v"+this.getDescription().getVersion());
+        getServer().getPluginManager().registerEvents(this, this);
         if(expireQueueEntriesTask!=null) expireQueueEntriesTask.cancel();
         if(sendQueueEntriesTask!=null) sendQueueEntriesTask.cancel();
         expireQueueEntriesTask = new BukkitRunnable() {
@@ -129,32 +138,16 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                 );
             }
         }.runTaskTimer(this,expirationInterval*TPS,expirationInterval*TPS);
-        
-        long tryUnsentPacketsInterval=getConfig().getLong("queue-try-unsent-seconds");
-        log("commands queue unsent retry time: "+tryUnsentPacketsInterval+"s");
         sendQueueEntriesTask = new BukkitRunnable() {
             public void run() {
-                
                 Bukkit.getOnlinePlayers().stream().forEach(
                         (player) -> {
                             if(player==null) return;
                             processQueueFor(player);
                         }
                 );
-                /*
-                packetQueue.entrySet().stream().forEach(
-                        (entry)->{
-                            Player player = Bukkit.getPlayer(entry.getKey());
-                            if(player==null) return;
-                            if(!player.isOnline()) return;
-                            //log("trying unsent packet");
-                            processQueueFor(player);
-                        }
-                );*/
             }
         }.runTaskTimer(this,tryUnsentPacketsInterval*TPS,tryUnsentPacketsInterval*TPS);
-        
-        
         enabled=true;
         log("Enabled.");
     }
@@ -243,6 +236,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             AZTabPlugin pl = (AZTabPlugin) this.plugin;
            
             if(!pl.enabled) return;
+            event.setCancelled(true);//prevent default tabcomplete
             Player playerDestination = event.getPlayer();
             if(playerDestination==null) return;
             
@@ -251,7 +245,6 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             PacketContainer epacket = event.getPacket();//get the outgoing spigot packet containing the command list
             queuePacketFor(playerDestination,epacket);
             
-            event.setCancelled(true);//prevent default tabcomplete
             
         }
 
