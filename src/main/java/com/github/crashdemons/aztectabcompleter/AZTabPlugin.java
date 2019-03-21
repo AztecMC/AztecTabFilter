@@ -29,6 +29,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -51,6 +52,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     
     //runtime behavior variables
     public volatile boolean loaded = false;
+    private volatile boolean ready = false;
     
     private ConcurrentHashMap<InetSocketAddress,Pair<LocalDateTime,PacketContainer>> packetQueue = new ConcurrentHashMap<>();
     //don't store Player from packet event since it will be a "temporary" player object that doesn't support every method.
@@ -62,6 +64,8 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     private long expirationInterval=60;
     private long tryUnsentPacketsInterval=10;
     
+    private boolean kickEarlyJoins=true;
+    private String kickMessage="The server is still loading - check back in a moment!";
     
     private boolean sendPacket(Player playerDestination, PacketContainer packet){
         if(playerDestination==null) return false;
@@ -93,6 +97,9 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         reloadConfig();
         
         filters.load(getConfig());
+        
+        kickEarlyJoins = getConfig().getBoolean("kick-early-joins");
+        kickMessage = getConfig().getString("kick-message");
     }
     
     
@@ -149,6 +156,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             }
         }.runTaskTimer(this,tryUnsentPacketsInterval*TPS,tryUnsentPacketsInterval*TPS);
         loaded=true;
+        ready = true;
         log("Enabled.");
     }
     
@@ -164,11 +172,23 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         }
         return false;
     }
+    
+    @EventHandler(priority=EventPriority.HIGH)
+    public void onPlayerLogin(PlayerLoginEvent event){
+        if(!loaded) return;
+        if(!ready){
+            if(kickEarlyJoins){
+                event.setKickMessage(kickMessage);
+                event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            }
+        }
+    }
    
     @EventHandler(priority=EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event){
         //log("playerjoinevent");
         if(!loaded) return;
+        if(!ready) return;
         Player player = event.getPlayer();
         //log("trying packets for joined player");
         processQueueFor(player);

@@ -76,9 +76,13 @@ queue-expiration-check-seconds: 60
 #defines the interval of time that the plugin will try to send unsent COMMANDS updates (generally from dimension changes, etc)
 queue-try-unsent-seconds: 10
 
+#kick players who join before the plugin is fully enabled.
+kick-early-joins: true
+kick-message: Please wait a moment for the server to load!
 
 
 # use the following configuration to enable classic behavior:
 #filter-order: [whitelist]
 #filter-default: DENY_FINAL
 #this will disable blacklists, groups, and make the default action to deny any non-matching entries.
+
