@@ -27,4 +27,7 @@ aztectabcompleter.reload:
     description: Gives permission to reload AZTab config
 aztectabcompleter.bypass:
     description: Gives permission to bypass command filtering by AZTab
+aztectabcompleter.suggest:
+    description: Gives permission to see command suggestions at all (checked before filtering)
+    default: true
 

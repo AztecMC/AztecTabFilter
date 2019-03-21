@@ -99,7 +99,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         if (player.hasPermission("aztectabcompleter.bypass")) {
             return;
         }
-        if (!ready) {
+        if (!ready || !player.hasPermission("aztectabcompleter.suggest")) {
             event.getCommands().clear();
         } else {
             event.getCommands().removeIf(entry -> !filters.filter(new FilterArgs(player, entry)).isAllowed);
