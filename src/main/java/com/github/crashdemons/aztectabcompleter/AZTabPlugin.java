@@ -100,6 +100,12 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         
         kickEarlyJoins = getConfig().getBoolean("kick-early-joins");
         kickMessage = getConfig().getString("kick-message");
+        expirationSeconds = getConfig().getLong("queue-expiration-seconds");
+        expirationInterval = getConfig().getLong("queue-expiration-check-seconds");
+        tryUnsentPacketsInterval=getConfig().getLong("queue-try-unsent-seconds");
+        log("commands queue unsent retry time: "+tryUnsentPacketsInterval+"s");
+        log("commands queue expiration time: "+expirationSeconds+"s");
+        log("commands queue check interval: "+expirationInterval+"s");
     }
     
     
@@ -124,12 +130,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         createInitialCommandsFilter();
         
         
-        expirationSeconds = getConfig().getLong("queue-expiration-seconds");
-        expirationInterval = getConfig().getLong("queue-expiration-check-seconds");
-        tryUnsentPacketsInterval=getConfig().getLong("queue-try-unsent-seconds");
-        log("commands queue unsent retry time: "+tryUnsentPacketsInterval+"s");
-        log("commands queue expiration time: "+expirationSeconds+"s");
-        log("commands queue check interval: "+expirationInterval+"s");
+
         
     }
     @Override
