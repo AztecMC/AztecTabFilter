@@ -15,6 +15,11 @@ commands:
           /aztabreload
         permission: aztectabcompleter.reload
         permission-message: You don't have permission for this command
+    aztabdump:
+        description: toggles dumping command filtering information to console
+        usage: /aztabdump
+        permission: aztectabcompleter.dump
+        permission-message: You don't have permission for this command
       
 permissions:
     aztectabcompleter.*:
@@ -33,4 +38,8 @@ permissions:
     aztectabcompleter.bypass:
         description: Gives permission to bypass command filtering by AZTab
         default: op
+    aztectabcompleter.dump:
+        description: Gives permission to enable console logging of filter results
+        default: op
+
 

@@ -32,6 +32,8 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
 
     private boolean kickEarlyJoins = true;
     private String kickMessage = "The server is still loading - check back in a moment!";
+    
+    private boolean dumpFiltering = false;
 
     public AZTabPlugin() {
         filters = new FilterSet(this);
@@ -81,13 +83,23 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         if (!loaded) {
             return true;
         }
-        if (cmd.getName().equalsIgnoreCase("aztabreload")) {
+        String command = cmd.getName();
+        if (command.equalsIgnoreCase("aztabreload")) {
             if (!sender.hasPermission("aztectabcompleter.reload")) {
                 sender.sendMessage("You don't have permission to do this.");
                 return true;
             }
             loadConfig();
             sender.sendMessage("[AZTab] Config reloaded.");
+            return true;
+        }else if (command.equalsIgnoreCase("aztabdump")) {
+            if (!sender.hasPermission("aztectabcompleter.dump")) {
+                sender.sendMessage("You don't have permission to do this.");
+                return true;
+            }
+            dumpFiltering = !dumpFiltering;
+            String dumpResult = dumpFiltering? "Enabled" : "Disabled";
+            sender.sendMessage("[AZTab] Console Filter Logging: "+dumpResult);
             return true;
         }
         return false;
@@ -97,12 +109,21 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     public void onCommandSuggestion(PlayerCommandSendEvent event) {
         Player player = event.getPlayer();
         if (player.hasPermission("aztectabcompleter.bypass")) {
+            if(dumpFiltering) getLogger().info(player.getName()+" bypassed filtering by permission.");
             return;
         }
-        if (!ready || !player.hasPermission("aztectabcompleter.suggest")) {
+        if(!ready){
+            if(dumpFiltering) getLogger().info(player.getName()+" denied suggestions - plugin not ready.");
+            event.getCommands().clear();
+            return;
+        }
+        if (!player.hasPermission("aztectabcompleter.suggest")) {
+            if(dumpFiltering) getLogger().info(player.getName()+" denied suggestions by permission.");
             event.getCommands().clear();
         } else {
+            if(dumpFiltering) getLogger().info(player.getName()+" commands,  pre-filter: "+event.getCommands());
             event.getCommands().removeIf(entry -> !filters.filter(new FilterArgs(player, entry)).isAllowed);
+            if(dumpFiltering) getLogger().info(player.getName()+" commands, post-filter: "+event.getCommands());
         }
     }
 
