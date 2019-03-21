@@ -9,6 +9,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.ListenerPriority;
+import static com.comphenix.protocol.events.ListenerPriority.HIGH;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
@@ -28,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -159,6 +161,8 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     }
     
     
+    
+    
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(!loaded) return true;
@@ -169,6 +173,14 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             return true;
         }
         return false;
+    }
+    
+    @EventHandler(priority=EventPriority.HIGH)
+    public void onCommandSuggestion(PlayerCommandSendEvent event){
+        Player player = event.getPlayer();
+        if(!ready){
+            event.getCommands().clear();
+        }
     }
     
     @EventHandler(priority=EventPriority.HIGH)
@@ -193,6 +205,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     }
     
     private void processQueueFor(Player playerDestination){
+        if(!ready) return;//don't process queued packets until completely enabled!
         if(playerDestination==null) return;
         InetSocketAddress addr = playerDestination.getAddress();
         String name = playerDestination.getName();
