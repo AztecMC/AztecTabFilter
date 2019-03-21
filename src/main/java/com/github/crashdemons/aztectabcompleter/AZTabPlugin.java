@@ -50,7 +50,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     private FilterSet filters;
     
     //runtime behavior variables
-    public volatile boolean enabled = false;
+    public volatile boolean loaded = false;
     
     private ConcurrentHashMap<InetSocketAddress,Pair<LocalDateTime,PacketContainer>> packetQueue = new ConcurrentHashMap<>();
     //don't store Player from packet event since it will be a "temporary" player object that doesn't support every method.
@@ -102,7 +102,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         log("Disabling...");
         if(expireQueueEntriesTask!=null) expireQueueEntriesTask.cancel();
         if(sendQueueEntriesTask!=null) sendQueueEntriesTask.cancel();
-        enabled=false;
+        loaded=false;
         log("Disabed.");
     }
     
@@ -112,7 +112,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         loadConfig();
         log("Loaded config.");
         protocolManager = ProtocolLibrary.getProtocolManager();
-        enabled=true;
+        loaded=true;
         
         createInitialCommandsFilter();
         
@@ -148,14 +148,14 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                 );
             }
         }.runTaskTimer(this,tryUnsentPacketsInterval*TPS,tryUnsentPacketsInterval*TPS);
-        enabled=true;
+        loaded=true;
         log("Enabled.");
     }
     
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if(!enabled) return true;
+        if(!loaded) return true;
         if (cmd.getName().equalsIgnoreCase("aztabreload")) {
             if(!sender.hasPermission("aztectabcompleter.reload")){ sender.sendMessage("You don't have permission to do this."); return true; }
             loadConfig();
@@ -168,7 +168,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
     @EventHandler(priority=EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event){
         //log("playerjoinevent");
-        if(!enabled) return;
+        if(!loaded) return;
         Player player = event.getPlayer();
         //log("trying packets for joined player");
         processQueueFor(player);
@@ -235,7 +235,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         public void onPacketSending (PacketEvent event) {
             AZTabPlugin pl = (AZTabPlugin) this.plugin;
            
-            if(!pl.enabled) return;
+            if(!pl.loaded) return;
             event.setCancelled(true);//prevent default tabcomplete
             Player playerDestination = event.getPlayer();
             if(playerDestination==null) return;
