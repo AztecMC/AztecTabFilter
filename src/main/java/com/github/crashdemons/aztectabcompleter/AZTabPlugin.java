@@ -128,10 +128,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         loaded=true;
         
         createInitialCommandsFilter();
-        
-        
-
-        
+        log("Created filter.");
     }
     @Override
     public void onEnable() {
