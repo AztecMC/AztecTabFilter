@@ -8,7 +8,9 @@ package com.github.crashdemons.aztectabcompleter.filters;
 import java.util.function.Predicate;
 
 /**
- * Semantic-sugar for Predicate syntax.
+ * Defines a boolean operation tested by Filters against input to decide a resulting action.
+ * This is generally defined by a boolean lambda-function taking the FilterArgs pair.
+ * (Semantic-sugar for Predicate syntax)
  * 
  * A filter is defined as a conditional check of filter arguments with the following implications:
    FilterCondition returns True: the command has passed filtering and should remain/be allowed to the next filter.
@@ -16,6 +18,11 @@ import java.util.function.Predicate;
  * @author crash
  */
 public interface FilterCondition extends Predicate<FilterArgs> {
+    /**
+     * Test the function against the input data
+     * @param pair the input pair of Player and Command Suggestion to be filtered
+     * @return Whether the function returned true or false.
+     */
     @Override
     public boolean test(FilterArgs pair);
 }
