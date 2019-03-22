@@ -11,6 +11,7 @@ Currently in 1.13, no `tab-complete` setting seems to stop all commands from bei
   * [Commands](#commands)
   * [Permissions](#permissions)
   * [Configuration](#configuration)
+    * [Example](#example-configuration)
 
 
 ## Getting the plugin
@@ -42,7 +43,7 @@ Using permissions you can define access to different groups of suggestions, bypa
 | Permission  | Default Value | Description |
 | ------------- | ------------- |  ------------- |
 | aztectabcompleter.*  | True for Ops | Inherit all permissions except group behavior (may differ by permissions plugin)  |
-| aztectabcompleter.suggest | True | Allows the user to receive suggestions. Without this permission, suggestions are blocked. |
+| aztectabcompleter.suggest | True | Allows the user to receive filtered suggestions. If you deny this permission, all suggestions are blocked. |
 | aztectabcompleter.group.*group-name-here* | Undefined | Enables filtering for this user which is defined by this group-name in the configuration file |
 | aztectabcompleter.bypass | True for Ops | Allows the user to bypass filtering, receiving all normal command-suggestions, unmodified. |
 | aztectabcompleter.reload | True for Ops | Allows the user to access the /aztabreload command |
@@ -60,3 +61,34 @@ The plugin configuration allows you to define whitelist/blacklist filtering of c
 | filter-default | DENY_FINAL | The default action that should occur when no filters match the command. Can have values `DENY_FINAL` or `ALLOW_FINAL`. This defaults to `DENY_FINAL` (blocking the suggestion) if it is not understood. | 
 | `kick-early-joins` | true | Whether players joining at server startup before the plugin is fully enabled should be kicked (true/false). *This option is experimental and may be removed if it is not necessary.* |
 | `kick-message` | Please wait a moment for the server to load! | The message players see when kicked by the above setting. |
+
+#### Example Configuration
+For better understanding, let's consider an example configuration like below:
+```
+visible-commands:
+    - spawn
+    - tpahere
+invisible-commands:
+    - etpahere
+groups:
+    vip:
+        visible-commands:
+            - nick
+        invisible-commands:
+            - seen
+    moderator:
+        visible-commands:
+            - mute
+            - v
+        invisible-commands:
+            - vanish
+filter-order: [blacklist,group-blacklists,whitelist,group-whitelists]
+filter-default: DENY_FINAL
+```
+With this configuration we can see that first the global blacklist is processed first (`invisible-commands`), then all blacklists for groups that apply to the user (for example: `invisible-commands` in `vip` and `chatmod`), the global whitelist, and group whitelists for the user.
+
+`spawn` and `tpahere` would be allowed to be displayed to everyone, while the alias `etpahere` is hidden from suggestions.
+
+For players with the `aztectabcompleter.group.moderator` permission, we can see similarly `vanish` is not displayed as a suggestion but the alias `v` is displayed. (assuming both are normally suggested).
+
+Additionally because the default action is *deny*, any commands not already in a whitelist (`visible-commands` or group equivalent) will be removed from suggestions.
