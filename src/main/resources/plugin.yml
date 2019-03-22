@@ -29,6 +29,7 @@ permissions:
             aztectabcompleter.reload: true
             aztectabcompleter.bypass: true
             aztectabcompleter.suggest: true
+            aztectabcompleter.dump: true
     aztectabcompleter.suggest:
         description: Gives permission to see command suggestions at all (checked before filtering)
         default: true
