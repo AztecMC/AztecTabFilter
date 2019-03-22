@@ -13,7 +13,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Defines the set of filter rules used by a plugin
+ * Defines and controls a grouping of filter rules (whitelist/blacklist/group equivalents) used by a plugin.
+ * A filterset is a list of whitelist/blacklist rules defined by a given path in the plugin config and requiring a given permission to be applicable.
  * @author crash
  */
 public class FilterSet {
@@ -32,7 +33,10 @@ public class FilterSet {
     
     private HashMap<String,FilterSet> filterGroups;
     
-   
+    /**
+     * Creates and sets-up a set of filters.
+     * @param pl the plugin
+     */
     public FilterSet(JavaPlugin pl){
         defaultResult=FilterResult.DENY_FINAL;//changed during load()
         permission = null;//TODO set permission for groups
@@ -86,20 +90,38 @@ public class FilterSet {
         );
     }
     
+    /**
+     * Determines whether a user defined by the Filter arguments has the permission relevant to this FilterSet
+     * @param args the filter arguments containing the player to check.
+     * @return whether the player has permission
+     */
     public boolean hasPermission(FilterArgs args){
         if(permission==null) return true;
         return args.getDestination().hasPermission(permission);
     }
     
+    /**
+     * Filters an input against the set of filters and decides action to take from filtering.
+     * @param args the input filter argument pair (Player, Command name suggestion) to check against filters
+     * @return the action decided based on filtering
+     */
     public FilterResult filter(FilterArgs args){
         return filterAll.decide(args);
     }
+    
+    /**
+     * Filters an input against the set of filters and decides whether the input should be allowed
+     * @param args the input filter argument pair (Player, Command name suggestion) to check against filters
+     * @return whether the input should be allowed, based on filtering
+     */
     public boolean filterBoolean(FilterArgs args){
         return filterAll.decide(args).isAllowed;
     }
     
+    //extend plugin logging to this class internals
     private void log(String s){ if(plugin!=null) plugin.getLogger().info(s); }
     
+    //load default action/outcome of filtering from config. Applies when no filters match in the set.
     private void loadDefaultResult(ConfigurationSection config){
         String resultName = config.getString("filter-default");
         try{
@@ -111,6 +133,7 @@ public class FilterSet {
         }
     }
     
+    //load the whitelist and blacklist values from the config
     private void loadLists(ConfigurationSection config, boolean logoutput){
         visibleCommands.clear();
         invisibleCommands.clear();
@@ -128,6 +151,8 @@ public class FilterSet {
         }
         if(logoutput) log("Loaded "+invisibleCommands.size()+" blacklist entries.");
     }
+    
+    //load the filter-order from the config
     private List<String> loadFilterOrder(ConfigurationSection config,boolean logoutput){
         ConfigurationSection defaults = config.getDefaultSection();
         if(config.contains("filter-order", true)){
@@ -139,6 +164,8 @@ public class FilterSet {
             return config.getDefaultSection().getStringList("filter-order");
         }
     }
+    
+    //collects and enables each of the filters defined in the filter-order for this set.
     private void buildFilterOrder(List<String> filterOrder){
         //build filter order list
         filtersEnabled.clear();
@@ -155,6 +182,9 @@ public class FilterSet {
             }
         }
     }
+    
+    //loads the set of filters for each group as a new FilterSet with the appropriate group permission and stores it in filterGroups
+    //Note: Group FilterSets have their internal filters accessed directly by the parent FilterSet, and do not have to be Built or Enabled by a Filter-Order.
     private void loadGroups(ConfigurationSection config, boolean logoutput, List<String> filterOrder){
         filterGroups.clear();
         ConfigurationSection groups = config.getConfigurationSection("groups");
@@ -176,6 +206,10 @@ public class FilterSet {
         log("Loaded "+filterGroups.size()+" groups.");
     }
     
+    /**
+     * Load all filters, order, and groups from the config and enables them for this set.
+     * @param config the configuration section to read for filter rules.
+     */
     public void load(ConfigurationSection config){//detect group load and don't load nested groups etc.
         loadDefaultResult(config);
         loadLists(config,true);
