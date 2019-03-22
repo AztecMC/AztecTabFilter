@@ -11,14 +11,14 @@ package com.github.crashdemons.aztectabcompleter.filters;
  */
 public class Filter {
     private final FilterCondition condition;
-    private final FilterResult passResult;
+    private final FilterResult matchResult;
     private final FilterResult failResult;
-    Filter(FilterResult passResult, FilterResult failResult, FilterCondition condition){
+    Filter(FilterResult matchResult, FilterResult failResult, FilterCondition condition){
         this.condition=condition;
-        this.passResult=passResult;
+        this.matchResult=matchResult;
         this.failResult=failResult;
     }
     FilterResult test(FilterArgs args){
-        return condition.test(args) ? passResult : failResult;
+        return condition.test(args) ? matchResult : failResult;
     }
 }
