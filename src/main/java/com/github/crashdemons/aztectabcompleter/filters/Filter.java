@@ -7,6 +7,10 @@ package com.github.crashdemons.aztectabcompleter.filters;
 
 /**
  * Filter class that defines a condition on which a filter matches or fails against input arguments, and decides the resulting action of the match.
+ * 
+ * A filter is defined as a conditional check of filter arguments with the following implications:
+   FilterCondition returns True: the command has matched filtering and should usually be Allowed or Blocked definitively (As context defines).
+   FilterCondition returns False: the command does not match the filter and should usually be continued to other filters (Skipped, unless it's final).
  * @author crash
  */
 public class Filter {

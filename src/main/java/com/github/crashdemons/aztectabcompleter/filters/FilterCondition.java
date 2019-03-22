@@ -12,9 +12,6 @@ import java.util.function.Predicate;
  * This is generally defined by a boolean lambda-function taking the FilterArgs pair.
  * (Semantic-sugar for Predicate syntax)
  * 
- * A filter is defined as a conditional check of filter arguments with the following implications:
-   FilterCondition returns True: the command has passed filtering and should remain/be allowed to the next filter.
-   FilterCondition returns False: the command has failed filtering and should be removed/blocked.
  * @author crash
  */
 public interface FilterCondition extends Predicate<FilterArgs> {
