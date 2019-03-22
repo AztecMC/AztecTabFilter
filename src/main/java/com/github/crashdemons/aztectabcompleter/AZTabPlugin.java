@@ -24,7 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AZTabPlugin extends JavaPlugin implements Listener {
 
     //internal variables 
-    private FilterSet filters;
+    private final FilterSet filters;
 
     //runtime behavior variables
     public volatile boolean loaded = false;

@@ -5,6 +5,7 @@
  */
 package com.github.crashdemons.aztectabcompleter.filters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,7 +34,7 @@ public class FilterSet {
     private volatile HashSet<String> visibleCommands;
     private volatile HashSet<String> invisibleCommands;
     private HashMap<String, Filter> filtersEnabled;
-    private Filter filterAll;
+    private final Filter filterAll;
 
     private HashMap<String, FilterSet> filterGroups;
 
@@ -155,6 +156,10 @@ public class FilterSet {
     //load default action/outcome of filtering from config. Applies when no filters match in the set.
     private void loadDefaultResult(ConfigurationSection config) {
         String resultName = config.getString("filter-default");
+        if(resultName==null){//should not occur because we have a defined default config value - but this corrects a warning.
+             plugin.getLogger().severe("Error loading filter-default action");
+             resultName = "DENY_FINAL";
+        }
         try {
             defaultResult = FilterResult.valueOf(resultName.toUpperCase());
             log("Loaded default action: " + defaultResult.name());
@@ -204,7 +209,11 @@ public class FilterSet {
             if (logoutput) {
                 plugin.getLogger().warning("No filter-order defined, using default.");
             }
-            return config.getDefaultSection().getStringList("filter-order");
+            if(defaults==null){//should not occur because we define a default configuration file internally, but this fixes a warning
+                plugin.getLogger().severe("Error loading default filter-order.");
+                return new ArrayList<>();//don't load any filters if there is an error.
+            }
+            return defaults.getStringList("filter-order");
         }
     }
 

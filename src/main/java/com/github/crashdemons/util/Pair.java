@@ -82,6 +82,7 @@ public class Pair<K,V> implements Map.Entry<K,V>{
     /**
      * @return the key
      */
+    @Override
     public K getKey() {
         return key;
     }
@@ -105,9 +106,10 @@ public class Pair<K,V> implements Map.Entry<K,V>{
      * @param second the value to set
      * @return the previous value held
      */
+    @Override
     public V setValue(V second) {
         V old = this.value;
-        this.value = value;
+        this.value = second;
         return old;
     }
 }
