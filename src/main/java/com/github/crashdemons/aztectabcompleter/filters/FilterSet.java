@@ -13,14 +13,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- *
+ * Defines the set of filter rules used by a plugin
  * @author crash
  */
 public class FilterSet {
-    JavaPlugin plugin;
-    String permission;
+    private JavaPlugin plugin;
+    private String permission;
     
-    FilterResult defaultResult;
+    private FilterResult defaultResult;
     private Filter filterWhitelist;
     private Filter filterBlacklist;
     private HashMap<String,Filter> filters;
@@ -30,7 +30,7 @@ public class FilterSet {
     private HashMap<String,Filter> filtersEnabled;
     private Filter filterAll;
     
-    HashMap<String,FilterSet> filterGroups;
+    private HashMap<String,FilterSet> filterGroups;
     
    
     public FilterSet(JavaPlugin pl){
