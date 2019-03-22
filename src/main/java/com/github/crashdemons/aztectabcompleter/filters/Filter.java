@@ -18,7 +18,8 @@ public class Filter {
         this.matchResult=matchResult;
         this.failResult=failResult;
     }
-    FilterResult test(FilterArgs args){
+    boolean match(FilterArgs args){ return condition.test(args); }
+    FilterResult decide(FilterArgs args){
         return condition.test(args) ? matchResult : failResult;
     }
 }

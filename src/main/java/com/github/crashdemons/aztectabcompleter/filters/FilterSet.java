@@ -59,7 +59,7 @@ public class FilterSet {
                 args->{
                     for(FilterSet groupFilterSet : filterGroups.values())
                         if(groupFilterSet.hasPermission(args))
-                            if(groupFilterSet.filterWhitelist.test(args)==FilterResult.ALLOW_FINAL) return true;
+                            if(groupFilterSet.filterWhitelist.decide(args)==FilterResult.ALLOW_FINAL) return true;
                     return false;
                 }
         ));
@@ -67,7 +67,7 @@ public class FilterSet {
                 args->{
                     for(FilterSet groupFilterSet : filterGroups.values())
                         if(groupFilterSet.hasPermission(args))
-                            if(groupFilterSet.filterWhitelist.test(args)==FilterResult.DENY_FINAL) return true;
+                            if(groupFilterSet.filterWhitelist.decide(args)==FilterResult.DENY_FINAL) return true;
                     return false;
                 }
         ));
@@ -75,7 +75,7 @@ public class FilterSet {
             args -> {
                 FilterResult currentResult=FilterResult.SKIP;
                 for(Filter filter : filtersEnabled.values()){
-                    FilterResult result = filter.test(args);
+                    FilterResult result = filter.decide(args);
                     if(result.isFinal) return result.isAllowed;
                     if(!result.isSkipped && result.overrides(currentResult))
                         currentResult = result;
@@ -92,10 +92,10 @@ public class FilterSet {
     }
     
     public FilterResult filter(FilterArgs args){
-        return filterAll.test(args);
+        return filterAll.decide(args);
     }
     public boolean filterBoolean(FilterArgs args){
-        return filterAll.test(args).isAllowed;
+        return filterAll.decide(args).isAllowed;
     }
     
     private void log(String s){ if(plugin!=null) plugin.getLogger().info(s); }
