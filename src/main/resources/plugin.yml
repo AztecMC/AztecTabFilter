@@ -4,28 +4,42 @@ version: ${project.version}
 author: crashdemons
 description: Filters command tab-complete suggestions by whitelist.
 website: https://github.com/crashdemons
-depend: [ProtocolLib]
 load: STARTUP
 
 api-version: 1.13
 
 commands:
-   aztabreload:
-      description: reloads aztab config
-      usage: |
-        /aztabreload
-      permission: aztectabcompleter.reload
-      permission-message: You don't have permission for this command
+    aztabreload:
+        description: reloads aztab config
+        usage: |
+          /aztabreload
+        permission: aztectabcompleter.reload
+        permission-message: You don't have permission for this command
+    aztabdump:
+        description: toggles dumping command filtering information to console
+        usage: /aztabdump
+        permission: aztectabcompleter.dump
+        permission-message: You don't have permission for this command
       
 permissions:
-  aztectabcompleter.*:
-    description: gives all permissions of the AZTab
-    default: op
-    children:
-        aztectabcompleter.reload: true
-        aztectabcompleter.bypass: true
-aztectabcompleter.reload:
-    description: Gives permission to reload AZTab config
-aztectabcompleter.bypass:
-    description: Gives permission to bypass command filtering by AZTab
+    aztectabcompleter.*:
+        description: gives all permissions of the AZTab
+        default: op
+        children:
+            aztectabcompleter.reload: true
+            aztectabcompleter.bypass: true
+            aztectabcompleter.suggest: true
+    aztectabcompleter.suggest:
+        description: Gives permission to see command suggestions at all (checked before filtering)
+        default: true
+    aztectabcompleter.reload:
+        description: Gives permission to reload AZTab config
+        default: op
+    aztectabcompleter.bypass:
+        description: Gives permission to bypass command filtering by AZTab
+        default: op
+    aztectabcompleter.dump:
+        description: Gives permission to enable console logging of filter results
+        default: op
+
 
