@@ -85,7 +85,7 @@ groups:
 filter-order: [blacklist,group-blacklists,whitelist,group-whitelists]
 filter-default: DENY_FINAL
 ```
-With this configuration we can see that first the global blacklist is processed first (`invisible-commands`), then all blacklists for groups that apply to the user (for example: `invisible-commands` in `vip` and `chatmod`), the global whitelist, and group whitelists for the user.
+With this configuration we can see from the `filter-order` that the global blacklist is processed first (`invisible-commands`), then all blacklists for groups that apply to the user (for example: `invisible-commands` in `vip` and `chatmod`), the global whitelist, and group whitelists for the user.
 
 `spawn` and `tpahere` would be allowed to be displayed to everyone, while the alias `etpahere` is hidden from suggestions.
 
