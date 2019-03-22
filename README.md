@@ -5,6 +5,14 @@ Currently in 1.13, no `tab-complete` setting seems to stop all commands from bei
 
 *Note:* Commands can only be removed from suggestions by this plugin, if the server does not already suggest it without the plugin, this will not add the suggestion.
 
+### Table of Contents
+* [Getting The Plugin](#getting-the-plugin)
+* [Using the Plugin](#using-the-plugin)
+  * [Commands](#commands)
+  * [Permissions](#permissions)
+  * [Configuration](#configuration)
+
+
 ## Getting the plugin
 
 ### Downloading the Plugin pre-built
