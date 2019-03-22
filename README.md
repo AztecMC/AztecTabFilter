@@ -54,13 +54,16 @@ The plugin configuration allows you to define whitelist/blacklist filtering of c
 
 | Configuration Option | Default Value | Description |
 | ------------- | ------------- |  ------------- |
-| visible-commands |  | A list of commands that are allowed to be displayed for everyone |
-| invisible-commands |  | A list of command suggestions that are blocked for everyone |
+| visible-commands |  | A list of commands that are allowed to be displayed for everyone. If a suggestion matches a command listed here it is allowed and no further filtering occurs for it. |
+| invisible-commands |  | A list of command suggestions that are blocked for everyone. If a suggestion matches a command listed here it is blocked and no further filtering occurs for it.  |
 | groups |  | A set of group configurations that have their own allow/block lists with the above options |
 | filter-order | [blacklist,group-blacklists,whitelist,group-whitelists] | A list of types of filters and in which order they should be applied. Can have values: `whitelist`, `blacklist`, `group-whitelists`, `group-blacklists` |
 | filter-default | DENY_FINAL | The default action that should occur when no filters match the command. Can have values `DENY_FINAL` or `ALLOW_FINAL`. This defaults to `DENY_FINAL` (blocking the suggestion) if it is not understood. | 
 | `kick-early-joins` | true | Whether players joining at server startup before the plugin is fully enabled should be kicked (true/false). *This option is experimental and may be removed if it is not necessary.* |
 | `kick-message` | Please wait a moment for the server to load! | The message players see when kicked by the above setting. |
+Note: allows and blocks
+
+**NOTE:** All allow/block filter rules are **final**, meaning they skip all other filtering rules once matched. Suggestions are checked against rules in the order defined by `filter-order` and their first match determines whether they will appear in the list of suggestions or not.
 
 #### Example Configuration
 For better understanding, let's consider an example configuration like below:
