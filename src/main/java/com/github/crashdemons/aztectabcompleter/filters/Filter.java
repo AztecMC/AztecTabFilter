@@ -10,9 +10,9 @@ package com.github.crashdemons.aztectabcompleter.filters;
  * @author crash
  */
 public class Filter {
-    FilterCondition condition;
-    FilterResult passResult;
-    FilterResult failResult;
+    private final FilterCondition condition;
+    private final FilterResult passResult;
+    private final FilterResult failResult;
     Filter(FilterResult passResult, FilterResult failResult, FilterCondition condition){
         this.condition=condition;
         this.passResult=passResult;
