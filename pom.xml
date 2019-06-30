@@ -24,22 +24,9 @@
 
 
     <repositories>
-	<repository>
-            <id>mojang</id>
-            <name>Mojang's Repository</name>
-            <url>https://libraries.minecraft.net/</url>
-        </repository>
-        <repository>
-            <id>spigot-group-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-        </repository>
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>md_5-releases</id>
-            <url>http://repo.md-5.net/content/repositories/releases/</url>
         </repository>
     </repositories>
 
