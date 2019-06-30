@@ -175,4 +175,5 @@
             </plugins>
         </pluginManagement>
     </build>
+    <name>AztecTabCompleter</name>
 </project>
