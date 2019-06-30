@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.crashdemons</groupId>
     <artifactId>AztecTabCompleter</artifactId>
-    <version>0.20.3-SNAPSHOT</version>
+    <version>0.20.4-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>brigadier</artifactId>
-            <version>1.0.14</version>
+            <version>1.0.500</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>
@@ -59,7 +59,13 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.14-pre5-SNAPSHOT</version>
+            <version>1.14.3-R0.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -79,6 +85,7 @@
                 <configuration>
                     <includes>
                         <include>org.bukkit</include>
+                        <include>com.mojangt</include>
                     </includes>
                 </configuration>
                 <executions>
@@ -89,7 +96,7 @@
                             <allowSnapshots>true</allowSnapshots>
                         </configuration>
                         <goals>
-                            <!--<goal>use-latest-versions</goal>-->
+                            <goal>use-latest-versions</goal>
                         </goals>
                     </execution>
                 </executions>
