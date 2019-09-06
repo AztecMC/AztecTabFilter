@@ -71,6 +71,9 @@ filter-default: DENY_FINAL
 kick-early-joins: true
 kick-message: Please wait a moment for the server to load!
 
+#additional feature to also block command that is not suggested/whitelisted
+block-commands: false
+block-message: You are not allowed to use that command!
 
 # use the following configuration to enable classic behavior:
 #filter-order: [whitelist]
