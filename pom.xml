@@ -163,5 +163,5 @@
             </plugins>
         </pluginManagement>
     </build>
-    <name>AztecTabCompleter</name>
+    <name>AztecTabFilter</name>
 </project>
