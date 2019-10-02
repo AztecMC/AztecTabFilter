@@ -1,4 +1,4 @@
-# AztecTabCompleter
+# AztecTabFilter
 Spigot 1.13-1.14.3 plugin that filters Command List Suggestions (initial tab complete) by allow/blocklists or groups.
 
 Currently in 1.13, no `tab-complete` setting seems to stop all commands from being suggested after typing `/<tab>`, which creates a privacy and configuration issue for you.  So, to correct this, this plugin exists to enforce filtering suggestions.
