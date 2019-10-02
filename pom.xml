@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.crashdemons</groupId>
-    <artifactId>AztecTabCompleter</artifactId>
+    <artifactId>AztecTabFilter</artifactId>
     <version>0.20.4-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
@@ -12,14 +12,14 @@
     </properties>
 
     <scm>
-        <developerConnection>scm:git:git@github.com:crashdemons/AztecTabCompleter.git</developerConnection>
-        <connection>scm:git:git://github.com/crashdemons/AztecTabCompleter.git</connection>
-        <url>https://github.com/crashdemons/AztecTabCompleter/tree/master/</url>
+        <developerConnection>scm:git:git@github.com:crashdemons/AztecTabFilter.git</developerConnection>
+        <connection>scm:git:git://github.com/crashdemons/AztecTabFilter.git</connection>
+        <url>https://github.com/crashdemons/AztecTabFilter/tree/master/</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/crashdemons/AztecTabCompleter/issues</url>
+        <url>https://github.com/crashdemons/AztecTabFilter/issues</url>
     </issueManagement>
 
 
