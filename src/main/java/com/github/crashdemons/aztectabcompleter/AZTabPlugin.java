@@ -2,12 +2,14 @@ package com.github.crashdemons.aztectabcompleter;
 
 import com.github.crashdemons.aztectabcompleter.filters.FilterArgs;
 import com.github.crashdemons.aztectabcompleter.filters.FilterSet;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,7 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class AZTabPlugin extends JavaPlugin implements Listener {
 
-    //internal variables 
+    //internal variables
     private final FilterSet filters;
 
     //runtime behavior variables
@@ -32,7 +34,10 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
 
     private boolean kickEarlyJoins = true;
     private String kickMessage = "The server is still loading - check back in a moment!";
-    
+
+    private boolean blockCommands = false;
+    private String blockMessage = "You are not allowed to use that command!";
+
     private boolean dumpFiltering = false;
 
     public AZTabPlugin() {
@@ -50,6 +55,12 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         filters.load(getConfig());
         kickEarlyJoins = getConfig().getBoolean("kick-early-joins");
         kickMessage = getConfig().getString("kick-message");
+
+        blockCommands = getConfig().getBoolean("block-commands");
+        String str = getConfig().getString("block-message");
+        if (str != null) {
+            blockMessage = ChatColor.translateAlternateColorCodes('&', str);
+        }
     }
 
     // Fired when plugin is disabled
@@ -137,6 +148,32 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
                 event.setKickMessage(kickMessage);
                 event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerCommandPreProcess(PlayerCommandPreprocessEvent event) {
+        if (!blockCommands) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        if (player.hasPermission("aztectabcompleter.bypass")) {
+            if(dumpFiltering) getLogger().info(player.getName()+" bypassed command filtering by permission.");
+            return;
+        }
+
+        int space = event.getMessage().indexOf(" ");
+        String command;
+        if (space == -1) {
+            command = event.getMessage().substring(1);
+        } else {
+            command = event.getMessage().substring(1, space);
+        }
+
+        if (!filters.filterBoolean(new FilterArgs(player, command.toLowerCase()))) {
+            player.sendMessage(blockMessage);
+            event.setCancelled(true);
         }
     }
 
