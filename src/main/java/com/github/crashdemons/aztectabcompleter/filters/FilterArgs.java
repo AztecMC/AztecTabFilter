@@ -5,7 +5,7 @@
  */
 package com.github.crashdemons.aztectabcompleter.filters;
 
-import com.github.crashdemons.util.Pair;
+import com.github.crashdemons.aztectabcompleter.util.Pair;
 import org.bukkit.entity.Player;
 
 /**
