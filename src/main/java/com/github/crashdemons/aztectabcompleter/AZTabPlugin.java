@@ -118,6 +118,9 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onCommandSuggestion(PlayerCommandSendEvent event) {
+        if(event.isAsynchronous()){
+            return;
+        }
         Player player = event.getPlayer();
         if (player.hasPermission("aztectabcompleter.bypass")) {
             if(dumpFiltering) getLogger().info(player.getName()+" bypassed filtering by permission.");
