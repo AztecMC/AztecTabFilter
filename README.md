@@ -1,6 +1,6 @@
 # AztecTabFilter
 
-**IMPORTANT:** The name of this plugin has changed and the config and permissions are being renamed to match. If you used to use this plugin while it was named AztecTabFilter and you don't want to change, you should use the code from the `old-name-support` branch, but this may not be updated as often.
+**IMPORTANT:** The name of this plugin has changed and the config and permissions are being renamed to match. If you used to use this plugin while it was named AztecTabCompleter and you don't want to change, you should use the code from the `old-name-support` branch, but this may not be updated as often.
 
 
 Spigot 1.13-1.14.3 plugin that filters Command List Suggestions (initial tab complete) by allow/blocklists or groups.
