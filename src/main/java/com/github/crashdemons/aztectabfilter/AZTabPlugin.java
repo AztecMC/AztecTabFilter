@@ -1,7 +1,7 @@
-package com.github.crashdemons.aztectabcompleter;
+package com.github.crashdemons.aztectabfilter;
 
-import com.github.crashdemons.aztectabcompleter.filters.FilterArgs;
-import com.github.crashdemons.aztectabcompleter.filters.FilterSet;
+import com.github.crashdemons.aztectabfilter.filters.FilterArgs;
+import com.github.crashdemons.aztectabfilter.filters.FilterSet;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -96,7 +96,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         }
         String command = cmd.getName();
         if (command.equalsIgnoreCase("aztabreload")) {
-            if (!sender.hasPermission("aztectabcompleter.reload")) {
+            if (!sender.hasPermission("aztectabfilter.reload")) {
                 sender.sendMessage("You don't have permission to do this.");
                 return true;
             }
@@ -104,7 +104,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             sender.sendMessage("[AZTab] Config reloaded.");
             return true;
         }else if (command.equalsIgnoreCase("aztabdump")) {
-            if (!sender.hasPermission("aztectabcompleter.dump")) {
+            if (!sender.hasPermission("aztectabfilter.dump")) {
                 sender.sendMessage("You don't have permission to do this.");
                 return true;
             }
@@ -122,7 +122,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (player.hasPermission("aztectabcompleter.bypass")) {
+        if (player.hasPermission("aztectabfilter.bypass")) {
             if(dumpFiltering) getLogger().info(player.getName()+" bypassed filtering by permission.");
             return;
         }
@@ -131,7 +131,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
             event.getCommands().clear();
             return;
         }
-        if (!player.hasPermission("aztectabcompleter.suggest")) {
+        if (!player.hasPermission("aztectabfilter.suggest")) {
             if(dumpFiltering) getLogger().info(player.getName()+" denied suggestions by permission.");
             event.getCommands().clear();
         } else {
@@ -161,7 +161,7 @@ public class AZTabPlugin extends JavaPlugin implements Listener {
         }
 
         Player player = event.getPlayer();
-        if (player.hasPermission("aztectabcompleter.bypass")) {
+        if (player.hasPermission("aztectabfilter.bypass")) {
             if(dumpFiltering) getLogger().info(player.getName()+" bypassed command filtering by permission.");
             return;
         }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.crashdemons.aztectabcompleter.filters;
+package com.github.crashdemons.aztectabfilter.filters;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -254,7 +254,7 @@ public class FilterSet {
         for (String groupname : groupnames) {
             ConfigurationSection groupConfig = groups.getConfigurationSection(groupname);
             FilterSet filterGroup = new FilterSet(this.plugin);
-            filterGroup.permission = "aztectabcompleter.group." + groupname;
+            filterGroup.permission = "aztectabfilter.group." + groupname;
             //filterGroup.load(groupConfig);
             filterGroup.loadLists(groupConfig, false);
             filterGroups.put(groupname, filterGroup);

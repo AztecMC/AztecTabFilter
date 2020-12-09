@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.crashdemons.aztectabcompleter.filters;
+package com.github.crashdemons.aztectabfilter.filters;
 
 /**
  * Defines an enumation of possible Filter outcomes that can be decided
@@ -36,7 +36,7 @@ public enum FilterResult {
     
     /**
      * The priority of the filter result where higher priority results override lower ones.
-     * @see #overrides(com.github.crashdemons.aztectabcompleter.filters.FilterResult) 
+     * @see #overrides(com.github.crashdemons.aztectabfilter.filters.FilterResult) 
      */
     public final int priority;
     /**

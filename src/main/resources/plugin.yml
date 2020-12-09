@@ -1,5 +1,5 @@
 name: ${project.name}
-main: com.github.crashdemons.aztectabcompleter.AZTabPlugin
+main: com.github.crashdemons.aztectabfilter.AZTabPlugin
 version: ${project.version}
 author: crashdemons
 description: Filters command tab-complete suggestions by whitelist.
@@ -13,33 +13,33 @@ commands:
         description: reloads aztab config
         usage: |
           /aztabreload
-        permission: aztectabcompleter.reload
+        permission: aztectabfilter.reload
         permission-message: You don't have permission for this command
     aztabdump:
         description: toggles dumping command filtering information to console
         usage: /aztabdump
-        permission: aztectabcompleter.dump
+        permission: aztectabfilter.dump
         permission-message: You don't have permission for this command
       
 permissions:
-    aztectabcompleter.*:
+    aztectabfilter.*:
         description: gives all permissions of the AZTab
         default: op
         children:
-            aztectabcompleter.reload: true
-            aztectabcompleter.bypass: true
-            aztectabcompleter.suggest: true
-            aztectabcompleter.dump: true
-    aztectabcompleter.suggest:
+            aztectabfilter.reload: true
+            aztectabfilter.bypass: true
+            aztectabfilter.suggest: true
+            aztectabfilter.dump: true
+    aztectabfilter.suggest:
         description: Gives permission to see command suggestions at all (checked before filtering)
         default: true
-    aztectabcompleter.reload:
+    aztectabfilter.reload:
         description: Gives permission to reload AZTab config
         default: op
-    aztectabcompleter.bypass:
+    aztectabfilter.bypass:
         description: Gives permission to bypass command filtering by AZTab
         default: op
-    aztectabcompleter.dump:
+    aztectabfilter.dump:
         description: Gives permission to enable console logging of filter results
         default: op
 

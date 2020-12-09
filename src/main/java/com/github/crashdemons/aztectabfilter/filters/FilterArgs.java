@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.crashdemons.aztectabcompleter.filters;
+package com.github.crashdemons.aztectabfilter.filters;
 
-import com.github.crashdemons.aztectabcompleter.util.Pair;
+import com.github.crashdemons.aztectabfilter.util.Pair;
 import org.bukkit.entity.Player;
 
 /**

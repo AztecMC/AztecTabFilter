@@ -25,7 +25,7 @@ invisible-commands:
     - particle
 
 #defines groups that have differing command whitelists and blacklists
-#give group permission with "aztectabcompleter.group.group-name-here"
+#give group permission with "aztectabfilter.group.group-name-here"
 #all applicable groups to a user will be checked for blacklist and whitelist matches if enabled in filter-order
 #note: groups only have visible and invisible command lists, they do not have their own filter-order or default action.
 #if you want a user to have multiple group's commands, give them the permission for each
@@ -51,9 +51,9 @@ groups:
 #valid filtering mods:
 #   whitelist: allows any command that appears in 'visible-commands', skips other filtering if matched
 #   blacklist: denies any command that appears in 'invisible-commands', skips other filtering if matched
-#   group-whitelists: for each group the user has the "aztectabcompleter.group.group-name-here" permission for:
+#   group-whitelists: for each group the user has the "aztectabfilter.group.group-name-here" permission for:
 #                     process the 'visible-commands' for the group as described above
-#   group-blacklists: for each group the user has the "aztectabcompleter.group.group-name-here" permission for:
+#   group-blacklists: for each group the user has the "aztectabfilter.group.group-name-here" permission for:
 #                     process the 'invisible-commands' for the group as described above
 # default configuration:
 #filter-order: [blacklist,group-blacklists,whitelist,group-whitelists]

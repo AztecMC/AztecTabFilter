@@ -1,6 +1,6 @@
 # AztecTabFilter
 
-**IMPORTANT:** The name of this plugin has changed and the config and permissions are being renamed to match. If you used to use this plugin while it was named AztecTabCompleter and you don't want to change, you should use the code from the `old-name-support` branch, but this may not be updated as often.
+**IMPORTANT:** The name of this plugin has changed and the config and permissions are being renamed to match. If you used to use this plugin while it was named AztecTabFilter and you don't want to change, you should use the code from the `old-name-support` branch, but this may not be updated as often.
 
 
 Spigot 1.13-1.14.3 plugin that filters Command List Suggestions (initial tab complete) by allow/blocklists or groups.
@@ -21,9 +21,9 @@ Currently in 1.13, no `tab-complete` setting seems to stop all commands from bei
 ## Getting the plugin
 
 ### Downloading the Plugin pre-built
-You can find released JARs (that can be added to your plugins folder) on the [Releases tab](https://github.com/crashdemons/AztecTabCompleter/releases) of this project.
+You can find released JARs (that can be added to your plugins folder) on the [Releases tab](https://github.com/crashdemons/AztecTabFilter/releases) of this project.
 
-If you want something a bit more shiny, you can check out our [development builds](https://ci.meme.tips/job/AztecTabCompleter/) available through Jenkins CI.
+If you want something a bit more shiny, you can check out our [development builds](https://ci.meme.tips/job/AztecTabFilter/) available through Jenkins CI.
 
 ### Building the Project yourself
 We've recently moved to using Maven! If you used build.xml or a Netbeans Project before, you may need to import the project again as a maven project / from existing POM.
@@ -46,12 +46,12 @@ Using permissions you can define access to different groups of suggestions, bypa
 
 | Permission  | Default Value | Description |
 | ------------- | ------------- |  ------------- |
-| aztectabcompleter.*  | True for Ops | Inherit all permissions except group behavior (may differ by permissions plugin)  |
-| aztectabcompleter.suggest | True | Allows the user to receive filtered suggestions. If you deny this permission, all suggestions are blocked. |
-| aztectabcompleter.group.*group-name-here* | Undefined | Enables filtering for this user which is defined by this group-name in the configuration file |
-| aztectabcompleter.bypass | True for Ops | Allows the user to bypass filtering, receiving all normal command-suggestions, unmodified. |
-| aztectabcompleter.reload | True for Ops | Allows the user to access the /aztabreload command |
-| aztectabcompleter.dump | True for Ops | Allows the user to access the /aztabdump command |
+| aztectabfilter.*  | True for Ops | Inherit all permissions except group behavior (may differ by permissions plugin)  |
+| aztectabfilter.suggest | True | Allows the user to receive filtered suggestions. If you deny this permission, all suggestions are blocked. |
+| aztectabfilter.group.*group-name-here* | Undefined | Enables filtering for this user which is defined by this group-name in the configuration file |
+| aztectabfilter.bypass | True for Ops | Allows the user to bypass filtering, receiving all normal command-suggestions, unmodified. |
+| aztectabfilter.reload | True for Ops | Allows the user to access the /aztabreload command |
+| aztectabfilter.dump | True for Ops | Allows the user to access the /aztabdump command |
 
 ### Configuration
 The plugin configuration allows you to define whitelist/blacklist filtering of command-suggestions for everyone, or for specific groups, as well as the ability to tweak filtering order and behavior.
@@ -96,6 +96,6 @@ With this configuration we can see from the `filter-order` that the global black
 
 `spawn` and `tpahere` would be allowed to be displayed to everyone, while the alias `etpahere` is hidden from suggestions.
 
-For players with the `aztectabcompleter.group.moderator` permission, we can see similarly `vanish` is not displayed as a suggestion but the alias `v` is displayed. (assuming both are normally suggested).
+For players with the `aztectabfilter.group.moderator` permission, we can see similarly `vanish` is not displayed as a suggestion but the alias `v` is displayed. (assuming both are normally suggested).
 
 Additionally because the default action is *deny*, any commands not already in a whitelist (`visible-commands` or group equivalent) will be removed from suggestions.

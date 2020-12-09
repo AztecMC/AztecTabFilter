@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.crashdemons.aztectabcompleter.filters;
+package com.github.crashdemons.aztectabfilter.filters;
 
 /**
  * Filter class that defines a condition on which a filter matches or fails against input arguments, and decides the resulting action of the match.
