@@ -80,7 +80,7 @@ public class FilterSet {
                 args -> {
                     for (FilterSet groupFilterSet : filterGroups.values()) {
                         if (groupFilterSet.hasPermission(args)) {
-                            if (groupFilterSet.filterWhitelist.decide(args) == FilterResult.DENY_FINAL) {
+                            if (groupFilterSet.filterBlacklist.decide(args) == FilterResult.DENY_FINAL) {
                                 return true;
                             }
                         }
