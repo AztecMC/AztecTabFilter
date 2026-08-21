@@ -1,5 +1,9 @@
 # Maintenance Changelog
 
+## 2026-08-20
+
+- Updated the Spigot API dependency to `26.2-R0.1-SNAPSHOT` and the plugin declaration to `api-version: '26.2'`.
+
 ## 2026-07-07
 
 - Pinned the Spigot API dependency to `26.1.1-R0.1-SNAPSHOT`, the newest Spigot API snapshot outside the 45-day window for this run.

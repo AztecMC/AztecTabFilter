@@ -6,7 +6,7 @@ description: Filters command tab-complete suggestions by whitelist.
 website: https://github.com/crashdemons
 load: STARTUP
 
-api-version: 1.13
+api-version: '26.2'
 
 commands:
     aztabreload:

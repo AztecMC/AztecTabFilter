@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <minecraft.api.version>26.1.1-R0.1-SNAPSHOT</minecraft.api.version>
+        <minecraft.api.version>26.2-R0.1-SNAPSHOT</minecraft.api.version>
         <maven.compiler.release>25</maven.compiler.release>
     </properties>
 
